@@ -11,6 +11,6 @@ export class AppComponent implements OnInit {
 
   constructor(private dataCollectorService: DataCollectorService) {}
   ngOnInit(): void {
-    this.dataCollectorService.readIndexXml();
+    this.dataCollectorService.loadData();
   }
 }
