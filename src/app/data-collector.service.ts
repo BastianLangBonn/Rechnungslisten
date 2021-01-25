@@ -11,7 +11,7 @@ export class DataCollectorService {
 
   public bills = new Subject<Bill[]>();
   public payments = new Subject<string[][]>();
-  private clients = new Subject<string[][]>();
+  private clients = new Subject<Client[]>();
 
   constructor(private http: HttpClient) { }
 
@@ -67,7 +67,6 @@ export class DataCollectorService {
   }
 
   private handleClients(header: FileHeader, content: string[]) {
-    console.log(header);
     const refinedClients: Client[] = content.map(line => {
       return {
         clientId: +line[header.fields.indexOf('Patnr')].slice(1, -1).trim(),
@@ -79,11 +78,10 @@ export class DataCollectorService {
         country: line[header.fields.indexOf('Land')].slice(1, -1).trim(),
       }
     });
-    console.log(refinedClients[0]);
+    this.clients.next(refinedClients);
   }
 
   private handleBills(header: FileHeader, content: string[]) {
-    console.log(content[0]);
     const refinedBills: Bill[] = content.map(line => {
       return {
         amount: +line[header.fields.indexOf('Betrag')].slice(1, -1).trim().replace(',','.'),
@@ -100,7 +98,6 @@ export class DataCollectorService {
       };
     });
     this.bills.next(refinedBills);
-    console.log(refinedBills[0]);
   }
 
 }
