@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import * as xml2js from 'xml2js';
 import { Subject } from 'rxjs';
-import { Bill, FileHeader } from './types';
+import { Bill, Client, FileHeader } from './types';
 
 @Injectable({
   providedIn: 'root'
@@ -41,9 +41,14 @@ export class DataCollectorService {
 
   private readFileHeadersFromJson(json: any): FileHeader[] {
     return json.DataSet.Media[0].Table.map(table => {
+      const fields = [];
+      if(table.VariableLength[0].VariablePrimaryKey) {
+        fields.push(table.VariableLength[0].VariablePrimaryKey[0].Name[0]);
+      }
+      fields.push(...table.VariableLength[0].VariableColumn.map(column => column.Name[0]));
       return {
         url: table.URL[0],
-        fields: table.VariableLength[0].VariableColumn.map(column => column.Name[0])
+        fields: fields
       }
     });
   }
@@ -62,26 +67,40 @@ export class DataCollectorService {
   }
 
   private handleClients(header: FileHeader, content: string[]) {
-
+    console.log(header);
+    const refinedClients: Client[] = content.map(line => {
+      return {
+        clientId: +line[header.fields.indexOf('Patnr')].slice(1, -1).trim(),
+        lastName: line[header.fields.indexOf('Name')].slice(1, -1).trim(),
+        firstName: line[header.fields.indexOf('Vorname')].slice(1, -1).trim(),
+        street: line[header.fields.indexOf('Strasse')].slice(1, -1).trim(),
+        zip: +line[header.fields.indexOf('Plz')].slice(1, -1).trim(),
+        city: line[header.fields.indexOf('Ort')].slice(1, -1).trim(),
+        country: line[header.fields.indexOf('Land')].slice(1, -1).trim(),
+      }
+    });
+    console.log(refinedClients[0]);
   }
 
   private handleBills(header: FileHeader, content: string[]) {
+    console.log(content[0]);
     const refinedBills: Bill[] = content.map(line => {
       return {
-        amount: +line[header.fields.indexOf('Betrag')].slice(1, -1).trim(),
-        amountStorno: +line[header.fields.indexOf('St_Betrag')],
-        billingNumber: line[header.fields.indexOf('rnr')],
-        canceled: line[header.fields.indexOf('Storniert')],
+        amount: +line[header.fields.indexOf('Betrag')].slice(1, -1).trim().replace(',','.'),
+        amountStorno: +line[header.fields.indexOf('St_Betrag')].replace(',','.'),
+        billingNumber: +line[header.fields.indexOf('rnr')].slice(1, -1).trim(),
+        canceled: line[header.fields.indexOf('Storniert')].slice(1, -1).trim(),
         clientId: +line[header.fields.indexOf('Patnr')].slice(1, -1).trim(),
-        date: line[header.fields.indexOf('Betrag')],
-        taxApplied: +line[header.fields.indexOf('Mwst')],
+        date: line[header.fields.indexOf('datum')],
+        taxApplied: +line[header.fields.indexOf('Mwst')].slice(1, -1).trim().replace(',','.'),
         taxFull: +line[header.fields.indexOf('MwstSatz')],
-        taxDifferent: line[header.fields.indexOf('AndererMwst')],
+        taxDifferent: line[header.fields.indexOf('AndererMwst')].slice(1, -1).trim(),
         taxReduced: +line[header.fields.indexOf('MwstSatzErm')],
 
       };
     });
     this.bills.next(refinedBills);
+    console.log(refinedBills[0]);
   }
 
 }

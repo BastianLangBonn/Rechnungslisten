@@ -6,7 +6,7 @@ export interface FileHeader {
 export interface Bill {
     amount: number;
     amountStorno: number;
-    billingNumber: string;
+    billingNumber: number;
     canceled: string;
     clientId: number;
     date: string;
@@ -14,4 +14,14 @@ export interface Bill {
     taxFull: number;
     taxDifferent: string;
     taxReduced: number;
+  }
+
+  export interface Client {
+      clientId: number;
+      lastName: string;
+      firstName: string;
+      street: string;
+      zip: number;
+      city: string;
+      country: string;
   }
