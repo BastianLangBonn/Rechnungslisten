@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import * as xml2js from 'xml2js';
 import { Subject } from 'rxjs';
+import { Bill, FileHeader } from './types';
 
 @Injectable({
   providedIn: 'root'
@@ -85,22 +86,3 @@ export class DataCollectorService {
 
 }
 
-
-
-interface FileHeader {
-  url: string;
-  fields: string[];
-}
-
-interface Bill {
-  amount: number;
-  amountStorno: number;
-  billingNumber: string;
-  canceled: string;
-  clientId: number;
-  date: string;
-  taxApplied: number;
-  taxFull: number;
-  taxDifferent: string;
-  taxReduced: number;
-}
