@@ -8,7 +8,7 @@ import { Subject } from 'rxjs';
 })
 export class DataCollectorService {
 
-  public bills = new Subject<string[][]>();
+  public bills = new Subject<Bill[]>();
   public payments = new Subject<string[][]>();
   private clients = new Subject<string[][]>();
 
@@ -31,9 +31,9 @@ export class DataCollectorService {
           const clientsHeader = fileHeaders.filter(header => header.url === 'patienten.txt')[0];
           const paymentsHeader = fileHeaders.filter(header => header.url === 'zahlungen.txt')[0];
           const billingPositionsHeader = fileHeaders.filter(header => header.url === 'rechpos.txt')[0];
-          this.processFile(paymentsHeader, this.handlePayments);
-          this.processFile(clientsHeader, this.handleClients);
-          this.processFile(billsHeader, this.handleBills);
+          this.processFile(paymentsHeader, this.handlePayments.bind(this));
+          this.processFile(clientsHeader, this.handleClients.bind(this));
+          this.processFile(billsHeader, this.handleBills.bind(this));
         });
     });
   }
@@ -47,27 +47,40 @@ export class DataCollectorService {
     });
   }
 
-  private processFile(header: FileHeader, handleLines: Function) {
+  private processFile(header: FileHeader, handleLines: Function, ) {
     this.http.get(`assets/${header.url}`, {responseType: 'text'})
       .subscribe(data => {
         const content = data.match(/[^\r\n]+/g)
           .map(line => line.split(';').map(field => field.trim()));
         handleLines(header, content);
-        // console.log(lines);
       });
   }
 
   private handlePayments(header: FileHeader, content: string[][]) {
-    console.log(content);
 
   }
 
-  private handleClients(header: FileHeader, lines: string[]) {
+  private handleClients(header: FileHeader, content: string[]) {
 
   }
 
-  private handleBills(header: FileHeader, lines: string[]) {
+  private handleBills(header: FileHeader, content: string[]) {
+    const refinedBills: Bill[] = content.map(line => {
+      return {
+        amount: +line[header.fields.indexOf('Betrag')].slice(1, -1).trim(),
+        amountStorno: +line[header.fields.indexOf('St_Betrag')],
+        billingNumber: line[header.fields.indexOf('rnr')],
+        canceled: line[header.fields.indexOf('Storniert')],
+        clientId: +line[header.fields.indexOf('Patnr')].slice(1, -1).trim(),
+        date: line[header.fields.indexOf('Betrag')],
+        taxApplied: +line[header.fields.indexOf('Mwst')],
+        taxFull: +line[header.fields.indexOf('MwstSatz')],
+        taxDifferent: line[header.fields.indexOf('AndererMwst')],
+        taxReduced: +line[header.fields.indexOf('MwstSatzErm')],
 
+      };
+    });
+    this.bills.next(refinedBills);
   }
 
 }
@@ -77,4 +90,17 @@ export class DataCollectorService {
 interface FileHeader {
   url: string;
   fields: string[];
+}
+
+interface Bill {
+  amount: number;
+  amountStorno: number;
+  billingNumber: string;
+  canceled: string;
+  clientId: number;
+  date: string;
+  taxApplied: number;
+  taxFull: number;
+  taxDifferent: string;
+  taxReduced: number;
 }
