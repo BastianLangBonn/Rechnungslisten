@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { combineLatest, Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 import { DataCollectorService } from './data-collector.service';
+import { Bill, Client } from './types';
 
 @Component({
   selector: 'app-root',
@@ -8,9 +11,13 @@ import { DataCollectorService } from './data-collector.service';
 })
 export class AppComponent implements OnInit {
   title = 'ReLiVe';
+  refinedBills$: Observable<any>;
+  bills$: Observable<Bill[]>;
+  clients$: Observable<Client[]>;
 
   constructor(private dataCollectorService: DataCollectorService) {}
+
   ngOnInit(): void {
-    this.dataCollectorService.loadData();
+    this.bills$ = this.dataCollectorService.bills;
   }
 }

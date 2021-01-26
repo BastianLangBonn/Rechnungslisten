@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import * as xml2js from 'xml2js';
-import { Subject } from 'rxjs';
+import { combineLatest, forkJoin, Observable, of, Subject } from 'rxjs';
 import { Bill, Client, FileHeader } from './types';
+import { catchError, map, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -11,32 +12,33 @@ export class DataCollectorService {
 
   public bills = new Subject<Bill[]>();
   public payments = new Subject<string[][]>();
-  private clients = new Subject<Client[]>();
+  public clients = new Subject<Client[]>();
 
   constructor(private http: HttpClient) { }
 
-  loadData() {
-    this.readIndexXml();
-
+  loadData(): Observable<void> {
+    return this.readHeaderFromXml();
   }
 
-  private readIndexXml() {
-    this.http.get('assets/index.xml', {responseType: 'text'})
-      .subscribe(data => {
-        xml2js.parseString(data, (error, result) => {
-          if(error) {
-            console.error(error);
-          }
-          const fileHeaders = this.readFileHeadersFromJson(result);
-          const billsHeader = fileHeaders.filter(header => header.url === 'rechnungen.txt')[0];
-          const clientsHeader = fileHeaders.filter(header => header.url === 'patienten.txt')[0];
-          const paymentsHeader = fileHeaders.filter(header => header.url === 'zahlungen.txt')[0];
-          const billingPositionsHeader = fileHeaders.filter(header => header.url === 'rechpos.txt')[0];
-          this.processFile(paymentsHeader, this.handlePayments.bind(this));
-          this.processFile(clientsHeader, this.handleClients.bind(this));
-          this.processFile(billsHeader, this.handleBills.bind(this));
-        });
-    });
+  private readHeaderFromXml(): Observable<void> {
+    return this.http.get('assets/index.xml', {responseType: 'text'})
+      .pipe(
+        map(data => {
+          xml2js.parseString(data, (error, result) => {
+            if(error) {
+              console.error(error);
+            }
+            const fileHeaders = this.readFileHeadersFromJson(result);
+            const billsHeader = fileHeaders.filter(header => header.url === 'rechnungen.txt')[0];
+            const clientsHeader = fileHeaders.filter(header => header.url === 'patienten.txt')[0];
+            const clientsData$ = this.processFile(clientsHeader, this.handleClients.bind(this));
+            const billsData$ = this.processFile(billsHeader, this.handleBills.bind(this));
+            forkJoin([clientsData$, billsData$]).subscribe(
+              contentData => this.bills.next(this.enrichBillsData(contentData[0], contentData[1]))
+            );
+          });
+        })
+    );
   }
 
   private readFileHeadersFromJson(json: any): FileHeader[] {
@@ -53,23 +55,20 @@ export class DataCollectorService {
     });
   }
 
-  private processFile(header: FileHeader, handleLines: Function, ) {
-    this.http.get(`assets/${header.url}`, {responseType: 'text'})
-      .subscribe(data => {
+  private processFile(header: FileHeader, handleLines: Function) {
+    return this.http.get(`assets/${header.url}`, {responseType: 'text'})
+      .pipe(
+        map(data => {
         const content = data.match(/[^\r\n]+/g)
           .map(line => line.split(';').map(field => field.trim()));
-        handleLines(header, content);
-      });
+        return handleLines(header, content);
+      }));
   }
 
-  private handlePayments(header: FileHeader, content: string[][]) {
-
-  }
-
-  private handleClients(header: FileHeader, content: string[]) {
+  private handleClients(header: FileHeader, content: string[][]): Client[] {
     const refinedClients: Client[] = content.map(line => {
       return {
-        clientId: +line[header.fields.indexOf('Patnr')].slice(1, -1).trim(),
+        id: +line[header.fields.indexOf('Patnr')],
         lastName: line[header.fields.indexOf('Name')].slice(1, -1).trim(),
         firstName: line[header.fields.indexOf('Vorname')].slice(1, -1).trim(),
         street: line[header.fields.indexOf('Strasse')].slice(1, -1).trim(),
@@ -78,15 +77,15 @@ export class DataCollectorService {
         country: line[header.fields.indexOf('Land')].slice(1, -1).trim(),
       }
     });
-    this.clients.next(refinedClients);
+    return refinedClients;
   }
 
-  private handleBills(header: FileHeader, content: string[]) {
+  private handleBills(header: FileHeader, content: string[][]): Bill[] {
     const refinedBills: Bill[] = content.map(line => {
       return {
         amount: +line[header.fields.indexOf('Betrag')].slice(1, -1).trim().replace(',','.'),
         amountStorno: +line[header.fields.indexOf('St_Betrag')].replace(',','.'),
-        billingNumber: +line[header.fields.indexOf('rnr')].slice(1, -1).trim(),
+        id: +line[header.fields.indexOf('rnr')].slice(1, -1).trim(),
         canceled: line[header.fields.indexOf('Storniert')].slice(1, -1).trim(),
         clientId: +line[header.fields.indexOf('Patnr')].slice(1, -1).trim(),
         date: line[header.fields.indexOf('datum')],
@@ -94,10 +93,20 @@ export class DataCollectorService {
         taxFull: +line[header.fields.indexOf('MwstSatz')],
         taxDifferent: line[header.fields.indexOf('AndererMwst')].slice(1, -1).trim(),
         taxReduced: +line[header.fields.indexOf('MwstSatzErm')],
-
       };
     });
-    this.bills.next(refinedBills);
+    return refinedBills;
+  }
+
+  private enrichBillsData(clientData: Client[], billsData: Bill[]): Bill[] {
+    return billsData.map(bill => {
+      const matchingClient = clientData.filter(client => client.id === bill.clientId)[0];
+      return {
+        ...bill,
+        firstName: matchingClient ? matchingClient.firstName : '',
+        lastName: matchingClient ? matchingClient.lastName : ''
+      }
+    });
   }
 
 }
