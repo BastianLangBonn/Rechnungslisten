@@ -40,6 +40,12 @@ npm-debug.log
 yarn-error.log
 testem.log
 /typings
+patienten.txt
+rechnungen.txt
+rechpos.txt
+sachkonten.txt
+umsaetze.CSV
+zahlungen.txt
 
 # System Files
 .DS_Store
