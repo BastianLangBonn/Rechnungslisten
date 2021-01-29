@@ -11,13 +11,9 @@ import { Bill, Client } from './types';
 })
 export class AppComponent implements OnInit {
   title = 'ReLiVe';
-  refinedBills$: Observable<any>;
-  bills$: Observable<Bill[]>;
-  clients$: Observable<Client[]>;
 
   constructor(private dataCollectorService: DataCollectorService) {}
 
   ngOnInit(): void {
-    this.bills$ = this.dataCollectorService.bills;
   }
 }

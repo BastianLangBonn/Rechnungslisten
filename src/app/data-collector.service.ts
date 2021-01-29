@@ -10,35 +10,40 @@ import { catchError, map, tap } from 'rxjs/operators';
 })
 export class DataCollectorService {
 
-  public bills = new Subject<Bill[]>();
-  public payments = new Subject<string[][]>();
-  public clients = new Subject<Client[]>();
+  public bills$ = new Observable<Bill[]>();
 
-  constructor(private http: HttpClient) { }
-
-  loadData(): Observable<void> {
-    return this.readHeaderFromXml();
+  constructor(private http: HttpClient) {
+    this.readHeaderFromXml().subscribe();
   }
 
   private readHeaderFromXml(): Observable<void> {
     return this.http.get('assets/index.xml', {responseType: 'text'})
       .pipe(
         map(data => {
-          xml2js.parseString(data, (error, result) => {
-            if(error) {
-              console.error(error);
-            }
-            const fileHeaders = this.readFileHeadersFromJson(result);
-            const billsHeader = fileHeaders.filter(header => header.url === 'rechnungen.txt')[0];
-            const clientsHeader = fileHeaders.filter(header => header.url === 'patienten.txt')[0];
-            const clientsData$ = this.processFile(clientsHeader, this.handleClients.bind(this));
-            const billsData$ = this.processFile(billsHeader, this.handleBills.bind(this));
-            forkJoin([clientsData$, billsData$]).subscribe(
-              contentData => this.bills.next(this.enrichBillsData(contentData[0], contentData[1]))
-            );
-          });
-        })
-    );
+          xml2js.parseString(data, this.handleJsonData.bind(this));
+      }
+    ));
+  }
+
+  private handleJsonData(error, json) {
+    console.log('handleJsonData');
+    console.log(error);
+    console.log(json);
+      if(error) {
+        console.error(error);
+        return;
+      }
+      const fileHeaders = this.readFileHeadersFromJson(json);
+      const billsHeader = fileHeaders.filter(header => header.url === 'rechnungen.txt')[0];
+      const clientsHeader = fileHeaders.filter(header => header.url === 'patienten.txt')[0];
+      const clientsData$ = this.processFile(clientsHeader, this.handleClients.bind(this));
+      const billsData$ = this.processFile(billsHeader, this.handleBills.bind(this));
+      this.bills$ = forkJoin([clientsData$, billsData$]).pipe(
+        tap(console.log),
+        map(data => this.enrichBillsData(data[0], data[1])),
+        tap(console.log)
+      )
+      this.bills$.subscribe();
   }
 
   private readFileHeadersFromJson(json: any): FileHeader[] {

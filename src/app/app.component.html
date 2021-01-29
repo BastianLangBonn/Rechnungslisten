@@ -1,4 +1,4 @@
 <h1>Rechnungen</h1>
-<div *ngFor="let bill of bills$ | async">
+<div *ngFor="let bill of dataCollectorService.bills$ | async">
     {{bill.firstName}} | {{bill.lastName}}
 </div>
