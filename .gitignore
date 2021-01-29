@@ -46,6 +46,7 @@ rechpos.txt
 sachkonten.txt
 umsaetze.CSV
 zahlungen.txt
+index.xml
 
 # System Files
 .DS_Store

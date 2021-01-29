@@ -12,7 +12,7 @@ import { Bill, Client } from './types';
 export class AppComponent implements OnInit {
   title = 'ReLiVe';
 
-  constructor(private dataCollectorService: DataCollectorService) {}
+  constructor(public dataCollectorService: DataCollectorService) {}
 
   ngOnInit(): void {
   }

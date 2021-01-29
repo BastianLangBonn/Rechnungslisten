@@ -1,4 +1,6 @@
 <h1>Rechnungen</h1>
-<div *ngFor="let bill of dataCollectorService.bills$ | async">
-    {{bill.firstName}} | {{bill.lastName}}
-</div>
+<ul>
+    <li *ngFor="let bill of dataCollectorService.bills$ | async">
+        {{bill.id}} | {{bill.firstName}} | {{bill.lastName}} | {{bill.amount}}€ | {{bill.date}}
+    </li>
+</ul>

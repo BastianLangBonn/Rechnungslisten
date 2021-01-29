@@ -14,6 +14,7 @@ export class DataCollectorService {
 
   constructor(private http: HttpClient) {
     this.readHeaderFromXml().subscribe();
+    this.readPayments().subscribe();
   }
 
   private readHeaderFromXml(): Observable<void> {
@@ -26,9 +27,6 @@ export class DataCollectorService {
   }
 
   private handleJsonData(error, json) {
-    console.log('handleJsonData');
-    console.log(error);
-    console.log(json);
       if(error) {
         console.error(error);
         return;
@@ -39,9 +37,7 @@ export class DataCollectorService {
       const clientsData$ = this.processFile(clientsHeader, this.handleClients.bind(this));
       const billsData$ = this.processFile(billsHeader, this.handleBills.bind(this));
       this.bills$ = forkJoin([clientsData$, billsData$]).pipe(
-        tap(console.log),
-        map(data => this.enrichBillsData(data[0], data[1])),
-        tap(console.log)
+        map(data => this.enrichBillsData(data[0], data[1]))
       )
       this.bills$.subscribe();
   }
@@ -63,11 +59,8 @@ export class DataCollectorService {
   private processFile(header: FileHeader, handleLines: Function) {
     return this.http.get(`assets/${header.url}`, {responseType: 'text'})
       .pipe(
-        map(data => {
-        const content = data.match(/[^\r\n]+/g)
-          .map(line => line.split(';').map(field => field.trim()));
-        return handleLines(header, content);
-      }));
+        map(data => handleLines(header, this.splitCsvFile(data)))
+      );
   }
 
   private handleClients(header: FileHeader, content: string[][]): Client[] {
@@ -83,6 +76,11 @@ export class DataCollectorService {
       }
     });
     return refinedClients;
+  }
+
+  private splitCsvFile(content): string[][] {
+    return content.match(/[^\r\n]+/g)
+          .map(line => line.split(';').map(field => field.trim()));
   }
 
   private handleBills(header: FileHeader, content: string[][]): Bill[] {
@@ -112,6 +110,16 @@ export class DataCollectorService {
         lastName: matchingClient ? matchingClient.lastName : ''
       }
     });
+  }
+
+  private readPayments() {
+    return this.http.get('assets/umsaetze.CSV', {responseType: 'text'})
+      .pipe(
+        map(data => this.splitCsvFile(data)),
+        tap(console.log)
+        // create header from first line
+        // extract payments from rest
+      );
   }
 
 }
