@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DataCollectorService } from './data-collector.service';
 import { StoreDataService } from './store-data.service';
+import { TransactionCollectorService } from './transaction-collector.service';
 import { Bill, Transaction } from './types';
 
 @Component({
@@ -15,7 +16,8 @@ export class AppComponent implements OnInit {
 
   constructor(
     public dataCollectorService: DataCollectorService,
-    private storeDataService: StoreDataService
+    private storeDataService: StoreDataService,
+    private transactionCollector: TransactionCollectorService
   ) {
   }
 
@@ -29,7 +31,7 @@ export class AppComponent implements OnInit {
   }
 
   getTransactions() {
-    this.dataCollectorService.loadTransactions().subscribe(transactions => this.transactions = transactions);
+    this.transactionCollector.loadTransactions().subscribe(transactions => this.transactions = transactions);
   }
 
   save() {
