@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { combineLatest, Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
 import { DataCollectorService } from './data-collector.service';
-import { Bill, Client } from './types';
+import { StoreDataService } from './store-data.service';
+import { Bill, Transaction } from './types';
 
 @Component({
   selector: 'app-root',
@@ -11,9 +10,29 @@ import { Bill, Client } from './types';
 })
 export class AppComponent implements OnInit {
   title = 'ReLiVe';
+  bills: Bill[] = [];
+  transactions: Transaction[];
 
-  constructor(public dataCollectorService: DataCollectorService) {}
+  constructor(
+    public dataCollectorService: DataCollectorService,
+    private storeDataService: StoreDataService
+  ) {
+  }
 
   ngOnInit(): void {
+    this.getBills();
+    this.getTransactions();
+  }
+
+  getBills() {
+    this.dataCollectorService.loadBills().subscribe(bills => this.bills = bills);
+  }
+
+  getTransactions() {
+    this.dataCollectorService.loadTransactions().subscribe(transactions => this.transactions = transactions);
+  }
+
+  save() {
+    this.storeDataService.store(this.bills);
   }
 }

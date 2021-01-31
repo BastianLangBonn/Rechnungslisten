@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import * as xml2js from 'xml2js';
-import { combineLatest, forkJoin, Observable, of, Subject } from 'rxjs';
+import { forkJoin, from, Observable } from 'rxjs';
 import { Bill, Client, FileHeader, Transaction } from './types';
-import { catchError, map, tap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -11,37 +11,28 @@ import { catchError, map, tap } from 'rxjs/operators';
 export class DataCollectorService {
 
   public bills$ = new Observable<Bill[]>();
-  public transactions$ = new Observable<Transaction[]>();
 
-  constructor(private http: HttpClient) {
-    this.readHeaderFromXml().subscribe();
-    this.transactions$ = this.readPayments();
-    this.transactions$.subscribe();
-  }
+  constructor(private http: HttpClient) {}
 
-  private readHeaderFromXml(): Observable<void> {
+  public loadBills() {
     return this.http.get('assets/index.xml', {responseType: 'text'})
       .pipe(
-        map(data => {
-          xml2js.parseString(data, this.handleJsonData.bind(this));
-      }
-    ));
+        switchMap(data => {
+          return from(xml2js.parseStringPromise(data)).pipe(
+            switchMap(this.handleJsonData.bind(this))
+        )})
+      );
   }
 
-  private handleJsonData(error, json) {
-      if(error) {
-        console.error(error);
-        return;
-      }
-      const fileHeaders = this.readFileHeadersFromJson(json);
-      const billsHeader = fileHeaders.filter(header => header.url === 'rechnungen.txt')[0];
-      const clientsHeader = fileHeaders.filter(header => header.url === 'patienten.txt')[0];
-      const clientsData$ = this.processFile(clientsHeader, this.handleClients.bind(this));
-      const billsData$ = this.processFile(billsHeader, this.handleBills.bind(this));
-      this.bills$ = forkJoin([clientsData$, billsData$]).pipe(
-        map(data => this.enrichBillsData(data[0], data[1]))
-      )
-      this.bills$.subscribe();
+  private handleJsonData(json): Observable<Bill[]> {
+    const fileHeaders = this.readFileHeadersFromJson(json);
+    const billsHeader = fileHeaders.filter(header => header.url === 'rechnungen.txt')[0];
+    const clientsHeader = fileHeaders.filter(header => header.url === 'patienten.txt')[0];
+    const clientsData$ = this.processFile(clientsHeader, this.handleClients.bind(this));
+    const billsData$ = this.processFile(billsHeader, this.handleBills.bind(this));
+    return forkJoin([clientsData$, billsData$]).pipe(
+      map(data => this.enrichBillsData(data[0], data[1]))
+    );
   }
 
   private readFileHeadersFromJson(json: any): FileHeader[] {
@@ -114,13 +105,11 @@ export class DataCollectorService {
     });
   }
 
-  private readPayments(): Observable<Transaction[]> {
+  public loadTransactions(): Observable<Transaction[]> {
     return this.http.get('assets/umsaetze.CSV', {responseType: 'text'})
       .pipe(
         map(data => this.splitCsvFile(data)),
-        tap(console.log),
-        map(data => this.extractPayments(data)),
-        tap(console.log)
+        map(data => this.extractPayments(data))
       );
   }
 

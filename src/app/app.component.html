@@ -1,13 +1,14 @@
 <h1>Rechnungen</h1>
 <ul>
-    <li *ngFor="let bill of dataCollectorService.bills$ | async">
-        {{bill.id}} | {{bill.firstName}} | {{bill.lastName}} | {{bill.amount}}€ | {{bill.date}}
+    <li *ngFor="let bill of bills">
+        {{bill.id}} | {{bill.firstName}} | {{bill.lastName}} | {{bill.amount}} € | {{bill.date}}
     </li>
 </ul>
 
 <h1>Überweisungen</h1>
 <ul>
-    <li *ngFor="let transaction of dataCollectorService.transactions$ | async">
-        {{transaction.payer}} | {{transaction.amount}} | {{transaction.usage}} | {{transaction.bookingText}}
+    <li *ngFor="let transaction of transactions">
+        {{transaction.payer}} | {{transaction.amount}} {{transaction.currency==='EUR' ? '€' : transaction.currency}} | {{transaction.usage}} | {{transaction.bookingText}}
     </li>
 </ul>
+<button (click)="save()">Save</button>
