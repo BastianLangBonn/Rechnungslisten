@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { forkJoin, from, Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import * as xml2js from 'xml2js';
-import { DataCollectorService } from './data-collector.service';
+import { CommonUtilsService } from './common-utils.service';
 import { Bill, Client, FileHeader } from './types';
 
 @Injectable({
@@ -11,7 +11,7 @@ import { Bill, Client, FileHeader } from './types';
 })
 export class BillCollectorService {
 
-  constructor(private http: HttpClient, private dataCollector: DataCollectorService) { }
+  constructor(private http: HttpClient, private dataCollector: CommonUtilsService) { }
 
   public loadBills() {
     return this.http.get('assets/index.xml', {responseType: 'text'})

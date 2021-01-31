@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { DataCollectorService } from './data-collector.service';
+import { CommonUtilsService } from './common-utils.service';
 import { Transaction } from './types';
 
 @Injectable({
@@ -10,7 +10,7 @@ import { Transaction } from './types';
 })
 export class TransactionCollectorService {
 
-  constructor(private http: HttpClient, private dataCollectorService: DataCollectorService) { }
+  constructor(private http: HttpClient, private dataCollectorService: CommonUtilsService) { }
 
   public loadTransactions(): Observable<Transaction[]> {
     return this.http.get('assets/umsaetze.CSV', {responseType: 'text'})

@@ -1,13 +1,12 @@
 import { TestBed } from '@angular/core/testing';
-
-import { DataCollectorService as DataCollectorService } from './data-collector.service';
+import { CommonUtilsService } from './common-utils.service';
 
 describe('FileServiceService', () => {
-  let service: DataCollectorService;
+  let service: CommonUtilsService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(DataCollectorService);
+    service = TestBed.inject(CommonUtilsService);
   });
 
   it('should be created', () => {

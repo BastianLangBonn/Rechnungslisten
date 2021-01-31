@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { BillCollectorService } from './bill-collector.service';
-import { DataCollectorService } from './data-collector.service';
 import { StoreDataService } from './store-data.service';
 import { TransactionCollectorService } from './transaction-collector.service';
 import { Bill, Transaction } from './types';
