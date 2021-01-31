@@ -43,7 +43,23 @@ export class MatcherService {
     console.log(stateAfterNameMatch.remainingTransactions.map(transaction => transaction.bookingText).reduce((acc, cur) => { return acc.includes(cur) ? acc : acc.concat(cur)}, []));
     console.log(stateAfterNameMatch.remainingTransactions.filter(transaction => transaction.amount < 0));
 
-    // Match Amount
+    // Match Amount => Not very accurate
+    const matchesByAmount = stateAfterNameMatch.remainingTransactions.map(transaction => {
+      return {
+        transaction,
+        bills: stateAfterNameMatch.remainingBills.filter(bill => bill.amount === transaction.amount),
+      };
+    });
+    console.log(matchesByAmount.filter(match => match.bills.length > 0));
+
+    // Matches by name only
+    const matchesByNameOnly = stateAfterNameMatch.remainingTransactions.map(transaction => {
+      return {
+        transaction,
+        bills: stateAfterNameMatch.remainingBills.filter(bill => transaction.amount !== bill.amount && transaction.payer.toUpperCase().includes(bill.lastName.toUpperCase())),
+      }
+    });
+    console.log(matchesByNameOnly.filter(match => match.bills.length > 0));
   }
 
   private findIdMatchesForTransactions(state: MatchingState): MatchingState {
