@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { BillCollectorService } from './bill-collector.service';
 import { DataCollectorService } from './data-collector.service';
 import { StoreDataService } from './store-data.service';
 import { TransactionCollectorService } from './transaction-collector.service';
@@ -15,11 +16,10 @@ export class AppComponent implements OnInit {
   transactions: Transaction[];
 
   constructor(
-    public dataCollectorService: DataCollectorService,
+    private billCollector: BillCollectorService,
     private storeDataService: StoreDataService,
     private transactionCollector: TransactionCollectorService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.getBills();
@@ -27,7 +27,7 @@ export class AppComponent implements OnInit {
   }
 
   getBills() {
-    this.dataCollectorService.loadBills().subscribe(bills => this.bills = bills);
+    this.billCollector.loadBills().subscribe(bills => this.bills = bills);
   }
 
   getTransactions() {
