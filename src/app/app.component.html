@@ -4,3 +4,10 @@
         {{bill.id}} | {{bill.firstName}} | {{bill.lastName}} | {{bill.amount}}€ | {{bill.date}}
     </li>
 </ul>
+
+<h1>Überweisungen</h1>
+<ul>
+    <li *ngFor="let transaction of dataCollectorService.transactions$ | async">
+        {{transaction.payer}} | {{transaction.amount}} | {{transaction.usage}} | {{transaction.bookingText}}
+    </li>
+</ul>

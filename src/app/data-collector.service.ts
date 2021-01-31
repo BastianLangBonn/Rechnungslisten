@@ -11,10 +11,12 @@ import { catchError, map, tap } from 'rxjs/operators';
 export class DataCollectorService {
 
   public bills$ = new Observable<Bill[]>();
+  public transactions$ = new Observable<Transaction[]>();
 
   constructor(private http: HttpClient) {
     this.readHeaderFromXml().subscribe();
-    this.readPayments().subscribe();
+    this.transactions$ = this.readPayments();
+    this.transactions$.subscribe();
   }
 
   private readHeaderFromXml(): Observable<void> {
@@ -112,7 +114,7 @@ export class DataCollectorService {
     });
   }
 
-  private readPayments() {
+  private readPayments(): Observable<Transaction[]> {
     return this.http.get('assets/umsaetze.CSV', {responseType: 'text'})
       .pipe(
         map(data => this.splitCsvFile(data)),
