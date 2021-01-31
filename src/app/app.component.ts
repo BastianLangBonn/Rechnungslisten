@@ -33,6 +33,6 @@ export class AppComponent implements OnInit {
   }
 
   save() {
-    this.storeDataService.store(this.bills);
+    this.storeDataService.storeBills(this.bills);
   }
 }
