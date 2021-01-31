@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BillCollectorService } from './bill-collector.service';
+import { MatcherService } from './matcher.service';
 import { StoreDataService } from './store-data.service';
 import { TransactionCollectorService } from './transaction-collector.service';
 import { Bill, Transaction } from './types';
@@ -17,7 +18,8 @@ export class AppComponent implements OnInit {
   constructor(
     private billCollector: BillCollectorService,
     private storeDataService: StoreDataService,
-    private transactionCollector: TransactionCollectorService
+    private transactionCollector: TransactionCollectorService,
+    private matcher: MatcherService
   ) {}
 
   ngOnInit(): void {
@@ -31,6 +33,10 @@ export class AppComponent implements OnInit {
 
   getTransactions() {
     this.transactionCollector.loadTransactions().subscribe(transactions => this.transactions = transactions);
+  }
+
+  match() {
+    this.matcher.match(this.bills, this.transactions);
   }
 
   save() {

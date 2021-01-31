@@ -57,35 +57,40 @@ export class BillCollectorService {
 
   private handleClients(header: FileHeader, content: string[][]): Client[] {
     const refinedClients: Client[] = content.map(line => {
+      const getEntry = (identifier: string) => line[header.fields.indexOf(identifier)];
+      const getStringEntry = (identifier: string) => getEntry(identifier).slice(1, -1).trim();
+      const getNumberEntry = (identifier: string) => +getEntry(identifier);
       return {
-        id: +line[header.fields.indexOf('Patnr')],
-        lastName: line[header.fields.indexOf('Name')].slice(1, -1).trim(),
-        firstName: line[header.fields.indexOf('Vorname')].slice(1, -1).trim(),
-        street: line[header.fields.indexOf('Strasse')].slice(1, -1).trim(),
-        zip: +line[header.fields.indexOf('Plz')].slice(1, -1).trim(),
-        city: line[header.fields.indexOf('Ort')].slice(1, -1).trim(),
-        country: line[header.fields.indexOf('Land')].slice(1, -1).trim(),
+        id: getNumberEntry('Patnr'),
+        lastName: getStringEntry('Name'),
+        firstName: getStringEntry('Vorname'),
+        street: getStringEntry('Strasse'),
+        zip: getStringEntry('Plz'),
+        city: getStringEntry('Ort'),
+        country: getStringEntry('Land'),
       }
     });
     return refinedClients;
   }
 
   private handleBills(header: FileHeader, content: string[][]): Bill[] {
-    const refinedBills: Bill[] = content.map(line => {
+    return content.map(line => {
+      const getEntry = (identifier: string) => line[header.fields.indexOf(identifier)];
+      const getStringEntry = (identifier: string) => getEntry(identifier).slice(1, -1).trim();
+      const getNumberEntry = (identifier: string) => +getEntry(identifier).replace(',','.');
       return {
-        amount: +line[header.fields.indexOf('Betrag')].slice(1, -1).trim().replace(',','.'),
-        amountStorno: +line[header.fields.indexOf('St_Betrag')].replace(',','.'),
-        id: +line[header.fields.indexOf('rnr')].slice(1, -1).trim(),
-        canceled: line[header.fields.indexOf('Storniert')].slice(1, -1).trim(),
-        clientId: +line[header.fields.indexOf('Patnr')].slice(1, -1).trim(),
-        date: line[header.fields.indexOf('datum')],
-        taxApplied: +line[header.fields.indexOf('Mwst')].slice(1, -1).trim().replace(',','.'),
-        taxFull: +line[header.fields.indexOf('MwstSatz')],
-        taxDifferent: line[header.fields.indexOf('AndererMwst')].slice(1, -1).trim(),
-        taxReduced: +line[header.fields.indexOf('MwstSatzErm')],
+        amount: getNumberEntry('Betrag'),
+        amountStorno: getNumberEntry('St_Betrag'),
+        id: getStringEntry('rnr'),
+        canceled: getStringEntry('Storniert'),
+        clientId: +getStringEntry('Patnr'),
+        date: getStringEntry('datum'),
+        taxApplied: getNumberEntry('Mwst'),
+        taxFull: getNumberEntry('MwstSatz'),
+        taxDifferent: getStringEntry('AndererMwst'),
+        taxReduced: getNumberEntry('MwstSatzErm'),
       };
     });
-    return refinedBills;
   }
 
   private enrichBillsData(clientData: Client[], billsData: Bill[]): Bill[] {

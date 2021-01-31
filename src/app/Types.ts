@@ -8,7 +8,7 @@ export interface FileHeader {
 export interface Bill {
     amount: number;
     amountStorno: number;
-    id: number;
+    id: string;
     canceled: string;
     clientId: number;
     date: string;
@@ -25,7 +25,7 @@ export interface Bill {
       lastName: string;
       firstName: string;
       street: string;
-      zip: number;
+      zip: string;
       city: string;
       country: string;
   }
@@ -48,4 +48,9 @@ export interface Bill {
     amount: number;
     currency: string;
     info: string;
+  }
+
+  export interface TransactionMatch {
+    transaction: Transaction;
+    bills: Bill[];
   }
