@@ -16,13 +16,33 @@ export class MatcherService {
       invalidMatches: []
     };
 
+
+    // TODO: Remove certain BookingTexts and negative amounts
+    initialState.remainingTransactions = initialState.remainingTransactions.filter(transaction => transaction.amount > 0);
+
     console.log(initialState);
     const stateAfterIdMatch = this.findIdMatchesForTransactions(initialState);
     console.log(stateAfterIdMatch);
 
-
-
     // Match Name
+    const matchesByName = stateAfterIdMatch.remainingTransactions.map(transaction => {
+      return {
+        transaction,
+        bills: stateAfterIdMatch.remainingBills.filter(bill => transaction.payer.toUpperCase().includes(bill.lastName.toUpperCase()) && transaction.amount === bill.amount),
+      }
+    }).filter(match => match.bills.length > 0);
+    console.log(matchesByName);
+    const stateAfterNameMatch: MatchingState = {
+      remainingBills: stateAfterIdMatch.remainingBills.filter(bill => !matchesByName.reduce((acc, cur) => acc.concat(cur.bills), []).includes(bill)),
+      remainingTransactions: stateAfterIdMatch.remainingTransactions.filter(transaction => !matchesByName.map(match => match.transaction).includes(transaction)),
+      validMatches: stateAfterIdMatch.validMatches.concat(matchesByName),
+      invalidMatches: stateAfterIdMatch.invalidMatches,
+    }
+
+    console.log(stateAfterNameMatch);
+    console.log(stateAfterNameMatch.remainingTransactions.map(transaction => transaction.bookingText).reduce((acc, cur) => { return acc.includes(cur) ? acc : acc.concat(cur)}, []));
+    console.log(stateAfterNameMatch.remainingTransactions.filter(transaction => transaction.amount < 0));
+
     // Match Amount
   }
 

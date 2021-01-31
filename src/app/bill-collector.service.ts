@@ -84,7 +84,7 @@ export class BillCollectorService {
         id: getStringEntry('rnr'),
         canceled: getStringEntry('Storniert'),
         clientId: +getStringEntry('Patnr'),
-        date: getStringEntry('datum'),
+        date: getEntry('datum'),
         taxApplied: getNumberEntry('Mwst'),
         taxFull: getNumberEntry('MwstSatz'),
         taxDifferent: getStringEntry('AndererMwst'),
