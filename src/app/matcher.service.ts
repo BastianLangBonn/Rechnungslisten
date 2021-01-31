@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Bill, Transaction, TransactionMatch } from './types';
+import { Bill, MatchingState, Transaction, TransactionMatch } from './types';
 
 @Injectable({
   providedIn: 'root'
@@ -9,23 +9,40 @@ export class MatcherService {
   constructor() { }
 
   public match(bills: Bill[], transactions: Transaction[]) {
-    // Match RNr
-    const idMatches = transactions.map(transaction => this.findMatchById(transaction, bills)).filter(match => match.bills.length > 0);
-    console.log(idMatches);
-    console.log(idMatches.filter(match => match.bills.length > 1));
-    const isValidMatch = match => match.transaction.amount === match.bills.reduce((acc, curr) => acc + curr.amount, 0);
-    const validatedIdMatches = idMatches.filter(isValidMatch);
-    const invalidIdMatches = idMatches.filter(match => !isValidMatch(match));
-    console.log(validatedIdMatches);
-    console.log(invalidIdMatches);
+    const initialState = {
+      remainingBills: bills,
+      remainingTransactions: transactions,
+      validMatches: [],
+      invalidMatches: []
+    };
 
-    // Validate Amount
+    console.log(initialState);
+    const stateAfterIdMatch = this.findIdMatchesForTransactions(initialState);
+    console.log(stateAfterIdMatch);
+
+
 
     // Match Name
     // Match Amount
   }
 
-  private findMatchById(transaction: Transaction, bills: Bill[]): TransactionMatch {
+  private findIdMatchesForTransactions(state: MatchingState): MatchingState {
+    const matchesById = state.remainingTransactions.map(transaction => this.findIdMatchesForTransaction(transaction, state.remainingBills)).filter(match => match.bills.length > 0);
+    const isValidMatch = match => match.transaction.amount === match.bills.reduce((acc, curr) => acc + curr.amount, 0);
+    const validMatches = state.validMatches.concat(...matchesById.filter(isValidMatch));
+    const invalidMatches = state.invalidMatches.concat(...matchesById.filter(match => !isValidMatch(match)))
+    const assignedTransactions = validMatches.map(match => match.transaction);
+    const assignedBills = validMatches.reduce((acc, curr) => acc.concat(curr.bills), []);
+
+    return {
+      remainingBills: state.remainingBills.filter(bill => !assignedBills.includes(bill)),
+      remainingTransactions: state.remainingTransactions.filter(transaction => !assignedTransactions.includes(transaction)),
+      validMatches,
+      invalidMatches,
+    }
+  }
+
+  private findIdMatchesForTransaction(transaction: Transaction, bills: Bill[]): TransactionMatch {
     const result = {
       transaction,
       bills: []
