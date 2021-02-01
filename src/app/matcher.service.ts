@@ -8,6 +8,8 @@ export class MatcherService {
 
   constructor() { }
 
+  pipe = (...fns) => (x) => fns.reduce((v, f) => f(v), x);
+
   public match(bills: Bill[], transactions: Transaction[]) {
     const initialState = {
       remainingBills: bills,
@@ -15,36 +17,29 @@ export class MatcherService {
       validMatches: [],
       invalidMatches: []
     };
-
-
     // TODO: Remove certain BookingTexts and negative amounts
     initialState.remainingTransactions = initialState.remainingTransactions.filter(transaction => transaction.amount > 0);
+    console.log(initialState.remainingTransactions.filter(transaction => transaction.amount < 0));
 
-    console.log(initialState);
-    const stateAfterIdMatch = this.findIdMatchesForTransactions(initialState);
-    console.log(stateAfterIdMatch);
+    const finalState = this.pipe(this.findIdMatchesForTransactions.bind(this), this.findNameMatchesForTransactions)(initialState);
+    console.log(finalState);
 
-    // Match Name
-    const stateAfterNameMatch = this.findNameMatchesForTransactions(stateAfterIdMatch);
-
-    console.log(stateAfterNameMatch);
-    console.log(stateAfterNameMatch.remainingTransactions.map(transaction => transaction.bookingText).reduce((acc, cur) => { return acc.includes(cur) ? acc : acc.concat(cur)}, []));
-    console.log(stateAfterNameMatch.remainingTransactions.filter(transaction => transaction.amount < 0));
+    console.log(finalState.remainingTransactions.map(transaction => transaction.bookingText).reduce((acc, cur) => { return acc.includes(cur) ? acc : acc.concat(cur)}, []));
 
     // Match Amount => Not very accurate
-    const matchesByAmount = stateAfterNameMatch.remainingTransactions.map(transaction => {
+    const matchesByAmount = finalState.remainingTransactions.map(transaction => {
       return {
         transaction,
-        bills: stateAfterNameMatch.remainingBills.filter(bill => bill.amount === transaction.amount),
+        bills: finalState.remainingBills.filter(bill => bill.amount === transaction.amount),
       };
     });
     console.log(matchesByAmount.filter(match => match.bills.length > 0));
 
     // Matches by name only
-    const matchesByNameOnly = stateAfterNameMatch.remainingTransactions.map(transaction => {
+    const matchesByNameOnly = finalState.remainingTransactions.map(transaction => {
       return {
         transaction,
-        bills: stateAfterNameMatch.remainingBills.filter(bill => transaction.amount !== bill.amount && transaction.payer.toUpperCase().includes(bill.lastName.toUpperCase())),
+        bills: finalState.remainingBills.filter(bill => transaction.amount !== bill.amount && transaction.payer.toUpperCase().includes(bill.lastName.toUpperCase())),
       }
     });
     console.log(matchesByNameOnly.filter(match => match.bills.length > 0));
@@ -66,6 +61,19 @@ export class MatcherService {
     }
   }
 
+  private findIdMatchesForTransaction(transaction: Transaction, bills: Bill[]): TransactionMatch {
+    const result = {
+      transaction,
+      bills: []
+    };
+    const numbersInUsage = transaction.usage.match(/\d+/g);
+    if( numbersInUsage ){
+      const matchingBills = bills.filter(bill => numbersInUsage.includes(bill.id))
+      result.bills = matchingBills;
+    }
+    return result;
+  }
+
   private findNameMatchesForTransactions(state: MatchingState): MatchingState {
     const matchesByName = state.remainingTransactions.map(transaction => {
       return {
@@ -81,16 +89,4 @@ export class MatcherService {
     }
   }
 
-  private findIdMatchesForTransaction(transaction: Transaction, bills: Bill[]): TransactionMatch {
-    const result = {
-      transaction,
-      bills: []
-    };
-    const numbersInUsage = transaction.usage.match(/\d+/g);
-    if( numbersInUsage ){
-      const matchingBills = bills.filter(bill => numbersInUsage.includes(bill.id))
-      result.bills = matchingBills;
-    }
-    return result;
-  }
 }
