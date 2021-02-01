@@ -39,17 +39,6 @@ export class MatcherService {
 
     console.log(finalState);
     return finalState;
-
-
-
-    // Matches by name only
-    const matchesByNameOnly = finalState.remainingTransactions.map(transaction => {
-      return {
-        transaction,
-        bills: finalState.remainingBills.filter(bill => transaction.amount !== bill.amount && transaction.payer.toUpperCase().includes(bill.lastName.toUpperCase())),
-      }
-    });
-    console.log(matchesByNameOnly.filter(match => match.bills.length > 0));
   }
 
   private filterNegativeTransactions(state: MatchState): MatchState {
@@ -121,12 +110,25 @@ export class MatcherService {
    * @param transactions List of transactions to be matched
    */
   public findAmountMatchesForTransactions(bills: Bill[], transactions: Transaction[]): TransactionMatch[] {
-    // Match Amount => Not very accurate
     return transactions.map(transaction => {
       return {
         transaction,
         bills: bills.filter(bill => bill.amount === transaction.amount),
       };
+    }).filter(match => match.bills.length > 0);
+  }
+
+  /**
+   * !!!NOT VERY ACCURATE!!!
+   * @param bills List of bills to be searched
+   * @param transactions List of transactions to be matched
+   */
+  public findNameMatchesOnlyForTransactions(bills: Bill[], transactions: Transaction[]): TransactionMatch[] {
+    return transactions.map(transaction => {
+      return {
+        transaction,
+        bills: bills.filter(bill => transaction.amount !== bill.amount && transaction.payer.toUpperCase().includes(bill.lastName.toUpperCase())),
+      }
     }).filter(match => match.bills.length > 0);
   }
 
