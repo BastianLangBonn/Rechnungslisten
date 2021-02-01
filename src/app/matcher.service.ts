@@ -1,4 +1,8 @@
+import { ThrowStmt } from '@angular/compiler';
 import { Injectable } from '@angular/core';
+import { forkJoin } from 'rxjs';
+import { BillCollectorService } from './bill-collector.service';
+import { TransactionCollectorService } from './transaction-collector.service';
 import { Bill, MatchState as MatchState, Transaction, TransactionMatch } from './types';
 
 const FILTERED_PAYERS = [
@@ -12,23 +16,37 @@ const FILTERED_PAYERS = [
   'BSCARD',
 ];
 
+const EMPTY_STATE: MatchState = {
+  totalNumberOfTransactions: 0,
+  totalNumberOfBills: 0,
+  remainingBills: [],
+  remainingTransactions: [],
+  filteredTransactions: [],
+  validMatches: [],
+  invalidMatches: [],
+};
+
 @Injectable({
   providedIn: 'root'
 })
 export class MatcherService {
 
-  constructor() { }
+  public matches: MatchState = EMPTY_STATE;
+
+  constructor(private transactionCollector: TransactionCollectorService, private billCollector: BillCollectorService) {
+    forkJoin([this.transactionCollector.transactions$,this.billCollector.bills$]).subscribe(([transactions, bills]) => {
+      this.matches = this.match(bills, transactions);
+    });
+   }
 
   pipe = (...fns) => (x) => fns.reduce((v, f) => f(v), x);
 
-  public match(bills: Bill[], transactions: Transaction[]): MatchState {
-    const initialState: MatchState = {
-      remainingBills: bills,
-      remainingTransactions: transactions,
-      filteredTransactions: [],
-      validMatches: [],
-      invalidMatches: []
-    };
+  private match(bills: Bill[], transactions: Transaction[]): MatchState {
+    const initialState: MatchState = EMPTY_STATE;
+    initialState.remainingBills = bills;
+    initialState.remainingTransactions = transactions;
+    initialState.totalNumberOfBills = bills.length;
+    initialState.totalNumberOfTransactions = transactions.length;
 
     const finalState: MatchState = this.pipe(
       this.filterNegativeTransactions,
@@ -66,6 +84,7 @@ export class MatcherService {
     const assignedBills = validMatches.reduce((acc, curr) => acc.concat(curr.bills), []);
 
     return {
+      ...state,
       remainingBills: state.remainingBills.filter(bill => !assignedBills.includes(bill)),
       remainingTransactions: state.remainingTransactions.filter(transaction => !assignedTransactions.includes(transaction)),
       filteredTransactions: state.filteredTransactions,
@@ -95,6 +114,7 @@ export class MatcherService {
       }
     }).filter(match => match.bills.length > 0);
     return {
+      ...state,
       remainingBills: state.remainingBills.filter(bill => !matchesByName.reduce((acc, cur) => acc.concat(cur.bills), []).includes(bill)),
       remainingTransactions: state.remainingTransactions.filter(transaction => !matchesByName.map(match => match.transaction).includes(transaction)),
       filteredTransactions: state.filteredTransactions,

@@ -1,1 +1,8 @@
-<p>dashboard works!</p>
+<h1>Überblick</h1>
+<div>Rechnungen Gesamt: {{matcher.matches.totalNumberOfBills}}</div>
+<div>Zahlungen Gesamt: {{matcher.matches.totalNumberOfTransactions}}</div>
+<div>Zugewiesene Zahlungen: {{matcher.matches.validMatches.length}}</div>
+<div>Aussortierte Zahlungen: {{matcher.matches.filteredTransactions.length}}</div>
+<div>Ungültige Zuweisungen: {{matcher.matches.invalidMatches.length}}</div>
+<div>Übrige Rechnungen: {{matcher.matches.remainingBills.length}}</div>
+<div>Übrige Zahlungen: {{matcher.matches.remainingTransactions.length}}</div>

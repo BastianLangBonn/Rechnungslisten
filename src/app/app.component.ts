@@ -22,24 +22,5 @@ export class AppComponent implements OnInit {
     private matcher: MatcherService
   ) {}
 
-  ngOnInit(): void {
-    this.getBills();
-    this.getTransactions();
-  }
-
-  getBills() {
-    this.billCollector.bills$.subscribe(bills => this.bills = bills);
-  }
-
-  getTransactions() {
-    this.transactionCollector.transactions$.subscribe(transactions => this.transactions = transactions);
-  }
-
-  match() {
-    this.matcher.match(this.bills, this.transactions);
-  }
-
-  save() {
-    this.storeDataService.storeBills(this.bills);
-  }
+  ngOnInit(): void {}
 }

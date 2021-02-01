@@ -1,15 +1,1 @@
-<button (click)="match()">Match</button>
-<button (click)="save()">Save</button>
-<h1>Rechnungen</h1>
-<ul>
-    <li *ngFor="let bill of bills">
-        {{bill.id}} | {{bill.firstName}} | {{bill.lastName}} | {{bill.amount}} € | {{bill.date}}
-    </li>
-</ul>
-
-<h1>Überweisungen</h1>
-<ul>
-    <li *ngFor="let transaction of transactions">
-        {{transaction.payer}} | {{transaction.amount}} {{transaction.currency==='EUR' ? '€' : transaction.currency}} | {{transaction.usage}} | {{transaction.bookingText}}
-    </li>
-</ul>
+<app-dashboard></app-dashboard>

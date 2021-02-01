@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { MatcherService } from '../matcher.service';
+import { MatchState } from '../types';
 
 @Component({
   selector: 'app-dashboard',
@@ -7,7 +9,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DashboardComponent implements OnInit {
 
-  constructor() { }
+  matchState: MatchState;
+
+  constructor(public matcher: MatcherService) {
+   }
 
   ngOnInit(): void {
   }

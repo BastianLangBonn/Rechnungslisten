@@ -61,4 +61,6 @@ export interface Bill {
     filteredTransactions: Transaction[];
     validMatches: TransactionMatch[];
     invalidMatches: TransactionMatch[];
+    totalNumberOfTransactions: number;
+    totalNumberOfBills: number;
   }
