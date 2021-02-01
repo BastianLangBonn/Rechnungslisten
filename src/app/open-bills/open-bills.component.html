@@ -1,4 +1,10 @@
 <h1>Übrige Rechnungen</h1>
-<div *ngFor="let bill of matcher.matches.remainingBills">
+<div class="header">
+    <div class="headerField" (click)="changeComparer('rnr')">Rechnungsnummer</div>
+    <div class="headerField" (click)="changeComparer('amount')">Betrag</div>
+    <div class="headerField" (click)="changeComparer('name')">Name</div>
+    <div class="headerField">Datum</div>
+</div>
+<div *ngFor="let bill of matcher.matches.remainingBills.sort(comparer)">
     {{bill.id}} | {{bill.amount}} | {{bill.lastName}}, {{bill.firstName}} | {{bill.date}}
 </div>
