@@ -10,10 +10,13 @@ import { Bill, Client, FileHeader } from './types';
   providedIn: 'root'
 })
 export class BillCollectorService {
+  public bills$: Observable<any>;
 
-  constructor(private http: HttpClient, private dataCollector: CommonUtilsService) { }
+  constructor(private http: HttpClient, private dataCollector: CommonUtilsService) {
+    this.bills$ = this.loadBills();
+   }
 
-  public loadBills() {
+  private loadBills() {
     return this.http.get('assets/index.xml', {responseType: 'text'})
       .pipe(
         switchMap(data => {

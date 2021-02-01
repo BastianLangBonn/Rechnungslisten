@@ -10,9 +10,13 @@ import { Transaction } from './types';
 })
 export class TransactionCollectorService {
 
-  constructor(private http: HttpClient, private dataCollectorService: CommonUtilsService) { }
+  public transactions$: Observable<Transaction[]>;
 
-  public loadTransactions(): Observable<Transaction[]> {
+  constructor(private http: HttpClient, private dataCollectorService: CommonUtilsService) {
+    this.transactions$ = this.loadTransactions();
+  }
+
+  private loadTransactions(): Observable<Transaction[]> {
     return this.http.get('assets/umsaetze.CSV', {responseType: 'text'})
       .pipe(
         map(data => this.dataCollectorService.splitCsvFile(data)),

@@ -28,11 +28,11 @@ export class AppComponent implements OnInit {
   }
 
   getBills() {
-    this.billCollector.loadBills().subscribe(bills => this.bills = bills);
+    this.billCollector.bills$.subscribe(bills => this.bills = bills);
   }
 
   getTransactions() {
-    this.transactionCollector.loadTransactions().subscribe(transactions => this.transactions = transactions);
+    this.transactionCollector.transactions$.subscribe(transactions => this.transactions = transactions);
   }
 
   match() {
