@@ -25,19 +25,7 @@ export class MatcherService {
     console.log(stateAfterIdMatch);
 
     // Match Name
-    const matchesByName = stateAfterIdMatch.remainingTransactions.map(transaction => {
-      return {
-        transaction,
-        bills: stateAfterIdMatch.remainingBills.filter(bill => transaction.payer.toUpperCase().includes(bill.lastName.toUpperCase()) && transaction.amount === bill.amount),
-      }
-    }).filter(match => match.bills.length > 0);
-    console.log(matchesByName);
-    const stateAfterNameMatch: MatchingState = {
-      remainingBills: stateAfterIdMatch.remainingBills.filter(bill => !matchesByName.reduce((acc, cur) => acc.concat(cur.bills), []).includes(bill)),
-      remainingTransactions: stateAfterIdMatch.remainingTransactions.filter(transaction => !matchesByName.map(match => match.transaction).includes(transaction)),
-      validMatches: stateAfterIdMatch.validMatches.concat(matchesByName),
-      invalidMatches: stateAfterIdMatch.invalidMatches,
-    }
+    const stateAfterNameMatch = this.findNameMatchesForTransactions(stateAfterIdMatch);
 
     console.log(stateAfterNameMatch);
     console.log(stateAfterNameMatch.remainingTransactions.map(transaction => transaction.bookingText).reduce((acc, cur) => { return acc.includes(cur) ? acc : acc.concat(cur)}, []));
@@ -75,6 +63,21 @@ export class MatcherService {
       remainingTransactions: state.remainingTransactions.filter(transaction => !assignedTransactions.includes(transaction)),
       validMatches,
       invalidMatches,
+    }
+  }
+
+  private findNameMatchesForTransactions(state: MatchingState): MatchingState {
+    const matchesByName = state.remainingTransactions.map(transaction => {
+      return {
+        transaction,
+        bills: state.remainingBills.filter(bill => transaction.payer.toUpperCase().includes(bill.lastName.toUpperCase()) && transaction.amount === bill.amount),
+      }
+    }).filter(match => match.bills.length > 0);
+    return {
+      remainingBills: state.remainingBills.filter(bill => !matchesByName.reduce((acc, cur) => acc.concat(cur.bills), []).includes(bill)),
+      remainingTransactions: state.remainingTransactions.filter(transaction => !matchesByName.map(match => match.transaction).includes(transaction)),
+      validMatches: state.validMatches.concat(matchesByName),
+      invalidMatches: state.invalidMatches,
     }
   }
 
