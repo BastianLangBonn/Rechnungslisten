@@ -1,1 +1,11 @@
-<p>open-transactions works!</p>
+<h1>Übrige Zahlungen</h1>
+<div routerLink="/dashboard"><h2><---</h2></div>
+<div class="header">
+    <div class="headerField" (click)="changeComparer('amount')">Betrag</div>
+    <div class="headerField" (click)="changeComparer('payer')">Kontoinhaber</div>
+    <div class="headerField" (click)="changeComparer('usage')">Verwendungszweck</div>
+    <div class="headerField" (click)="changeComparer('date')">Buchungsdatum</div>
+</div>
+<div *ngFor="let transaction of matcher.matches.remainingTransactions.sort(comparer)">
+    {{transaction.amount}} | {{transaction.payer}} | {{transaction.usage}} | {{transaction.transactionDate}}
+</div>
