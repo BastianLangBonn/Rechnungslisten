@@ -5,16 +5,25 @@ import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { RouterModule, Routes } from '@angular/router';
+import { AssignedTransactionsComponent } from './assigned-transactions/assigned-transactions.component';
+import { OpenTransactionsComponent } from './open-transactions/open-transactions.component';
+import { OpenBillsComponent } from './open-bills/open-bills.component';
 
 
 const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
+  { path: 'assignedTransactions', component: AssignedTransactionsComponent },
+  { path: 'openTransactions', component: OpenTransactionsComponent },
+  { path: 'openBills', component: OpenBillsComponent },
   { path: '', redirectTo: '/dashboard', pathMatch: 'full'},
 ];
 @NgModule({
   declarations: [
     AppComponent,
-    DashboardComponent
+    DashboardComponent,
+    AssignedTransactionsComponent,
+    OpenTransactionsComponent,
+    OpenBillsComponent
   ],
   imports: [
     BrowserModule,
