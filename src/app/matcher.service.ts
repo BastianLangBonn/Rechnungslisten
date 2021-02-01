@@ -22,9 +22,10 @@ export class MatcherService {
   pipe = (...fns) => (x) => fns.reduce((v, f) => f(v), x);
 
   public match(bills: Bill[], transactions: Transaction[]) {
-    const initialState = {
+    const initialState: MatchState = {
       remainingBills: bills,
       remainingTransactions: transactions,
+      filteredTransactions: [],
       validMatches: [],
       invalidMatches: []
     };
@@ -65,6 +66,7 @@ export class MatcherService {
     return {
       ...state,
       remainingTransactions: state.remainingTransactions.filter(transaction => transaction.amount > 0),
+      filteredTransactions: state.remainingTransactions.filter(transaction => transaction.amount < 0),
     }
   }
 
@@ -72,6 +74,7 @@ export class MatcherService {
     return {
       ...state,
       remainingTransactions: state.remainingTransactions.filter(transaction => !FILTERED_PAYERS.includes(transaction.payer)),
+      filteredTransactions: state.filteredTransactions.concat(state.remainingTransactions.filter(transaction => FILTERED_PAYERS.includes(transaction.payer))),
     }
   }
 
@@ -86,6 +89,7 @@ export class MatcherService {
     return {
       remainingBills: state.remainingBills.filter(bill => !assignedBills.includes(bill)),
       remainingTransactions: state.remainingTransactions.filter(transaction => !assignedTransactions.includes(transaction)),
+      filteredTransactions: state.filteredTransactions,
       validMatches,
       invalidMatches,
     }
@@ -114,6 +118,7 @@ export class MatcherService {
     return {
       remainingBills: state.remainingBills.filter(bill => !matchesByName.reduce((acc, cur) => acc.concat(cur.bills), []).includes(bill)),
       remainingTransactions: state.remainingTransactions.filter(transaction => !matchesByName.map(match => match.transaction).includes(transaction)),
+      filteredTransactions: state.filteredTransactions,
       validMatches: state.validMatches.concat(matchesByName),
       invalidMatches: state.invalidMatches,
     }
