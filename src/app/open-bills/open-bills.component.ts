@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatcherService } from '../matcher.service';
 
 @Component({
   selector: 'app-open-bills',
@@ -7,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class OpenBillsComponent implements OnInit {
 
-  constructor() { }
+  constructor(public matcher: MatcherService) { }
 
   ngOnInit(): void {
   }

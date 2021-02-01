@@ -1,6 +1,6 @@
 <h1>Überblick</h1>
-<div>Rechnungen Gesamt: {{matcher.matches.totalNumberOfBills}}</div>
-<div>Zahlungen Gesamt: {{matcher.matches.totalNumberOfTransactions}}</div>
+<div>Rechnungen Gesamt: {{matcher.matches.initialBills.length}}</div>
+<div>Zahlungen Gesamt: {{matcher.matches.initialTransactions.length}}</div>
 <div routerLink="/assignedTransactions">Zugewiesene Zahlungen: {{matcher.matches.validMatches.length}}</div>
 <div>Aussortierte Zahlungen: {{matcher.matches.filteredTransactions.length}}</div>
 <div>Ungültige Zuweisungen: {{matcher.matches.invalidMatches.length}}</div>

@@ -1,1 +1,4 @@
-<p>open-bills works!</p>
+<h1>Übrige Rechnungen</h1>
+<div *ngFor="let bill of matcher.matches.remainingBills">
+    {{bill.id}} | {{bill.amount}} | {{bill.lastName}}, {{bill.firstName}} | {{bill.date}}
+</div>

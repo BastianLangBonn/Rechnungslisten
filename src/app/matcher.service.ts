@@ -17,8 +17,8 @@ const FILTERED_PAYERS = [
 ];
 
 const EMPTY_STATE: MatchState = {
-  totalNumberOfTransactions: 0,
-  totalNumberOfBills: 0,
+  initialTransactions: [],
+  initialBills: [],
   remainingBills: [],
   remainingTransactions: [],
   filteredTransactions: [],
@@ -45,8 +45,8 @@ export class MatcherService {
     const initialState: MatchState = EMPTY_STATE;
     initialState.remainingBills = bills;
     initialState.remainingTransactions = transactions;
-    initialState.totalNumberOfBills = bills.length;
-    initialState.totalNumberOfTransactions = transactions.length;
+    initialState.initialBills = bills;
+    initialState.initialTransactions = transactions;
 
     const finalState: MatchState = this.pipe(
       this.filterNegativeTransactions,

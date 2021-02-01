@@ -9,8 +9,6 @@ import { MatchState } from '../types';
 })
 export class DashboardComponent implements OnInit {
 
-  matchState: MatchState;
-
   constructor(public matcher: MatcherService) {
    }
 
