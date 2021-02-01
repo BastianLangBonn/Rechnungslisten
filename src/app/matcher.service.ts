@@ -1,6 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Bill, MatchState as MatchState, Transaction, TransactionMatch } from './types';
 
+const FILTERED_PAYERS = [
+  'Kassenzahnarztliche Vereinigung Nordrhein',
+  'Techniker Krankenkasse',
+  'DAMPSOFT GmbH',
+  'IKK classic',
+  'AOK Rheinland/Hamburg',
+  'Unfallkasse NRW',
+  'BARMER',
+  'BSCARD',
+];
+
 @Injectable({
   providedIn: 'root'
 })
@@ -17,11 +28,17 @@ export class MatcherService {
       validMatches: [],
       invalidMatches: []
     };
-    // TODO: Remove certain BookingTexts and negative amounts
+
     console.log(initialState.remainingTransactions.filter(transaction => transaction.amount < 0));
 
-    const finalState = this.pipe(this.removeNegativeTransactions, this.findIdMatchesForTransactions.bind(this), this.findNameMatchesForTransactions)(initialState);
+    const finalState: MatchState = this.pipe(
+      this.filterNegativeTransactions,
+      this.filterListedPayers,
+      this.findIdMatchesForTransactions.bind(this),
+      this.findNameMatchesForTransactions
+    )(initialState);
     console.log(finalState);
+    console.log(finalState.remainingTransactions.map(transaction => transaction.payer).reduce((acc, cur) => { return acc.includes(cur) ? acc : acc.concat(cur)}, []));
 
     console.log(finalState.remainingTransactions.map(transaction => transaction.bookingText).reduce((acc, cur) => { return acc.includes(cur) ? acc : acc.concat(cur)}, []));
 
@@ -44,10 +61,17 @@ export class MatcherService {
     console.log(matchesByNameOnly.filter(match => match.bills.length > 0));
   }
 
-  private removeNegativeTransactions(state: MatchState): MatchState {
+  private filterNegativeTransactions(state: MatchState): MatchState {
     return {
       ...state,
       remainingTransactions: state.remainingTransactions.filter(transaction => transaction.amount > 0),
+    }
+  }
+
+  private filterListedPayers(state: MatchState): MatchState {
+    return {
+      ...state,
+      remainingTransactions: state.remainingTransactions.filter(transaction => !FILTERED_PAYERS.includes(transaction.payer)),
     }
   }
 
