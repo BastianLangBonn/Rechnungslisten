@@ -55,7 +55,7 @@ export interface Bill {
     bills: Bill[];
   }
 
-  export interface MatchingState {
+  export interface MatchState {
     remainingBills: Bill[];
     remainingTransactions: Transaction[];
     validMatches: TransactionMatch[];

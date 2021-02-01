@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Bill, MatchingState, Transaction, TransactionMatch } from './types';
+import { Bill, MatchState as MatchState, Transaction, TransactionMatch } from './types';
 
 @Injectable({
   providedIn: 'root'
@@ -18,10 +18,9 @@ export class MatcherService {
       invalidMatches: []
     };
     // TODO: Remove certain BookingTexts and negative amounts
-    initialState.remainingTransactions = initialState.remainingTransactions.filter(transaction => transaction.amount > 0);
     console.log(initialState.remainingTransactions.filter(transaction => transaction.amount < 0));
 
-    const finalState = this.pipe(this.findIdMatchesForTransactions.bind(this), this.findNameMatchesForTransactions)(initialState);
+    const finalState = this.pipe(this.removeNegativeTransactions, this.findIdMatchesForTransactions.bind(this), this.findNameMatchesForTransactions)(initialState);
     console.log(finalState);
 
     console.log(finalState.remainingTransactions.map(transaction => transaction.bookingText).reduce((acc, cur) => { return acc.includes(cur) ? acc : acc.concat(cur)}, []));
@@ -45,7 +44,14 @@ export class MatcherService {
     console.log(matchesByNameOnly.filter(match => match.bills.length > 0));
   }
 
-  private findIdMatchesForTransactions(state: MatchingState): MatchingState {
+  private removeNegativeTransactions(state: MatchState): MatchState {
+    return {
+      ...state,
+      remainingTransactions: state.remainingTransactions.filter(transaction => transaction.amount > 0),
+    }
+  }
+
+  private findIdMatchesForTransactions(state: MatchState): MatchState {
     const matchesById = state.remainingTransactions.map(transaction => this.findIdMatchesForTransaction(transaction, state.remainingBills)).filter(match => match.bills.length > 0);
     const isValidMatch = match => match.transaction.amount === match.bills.reduce((acc, curr) => acc + curr.amount, 0);
     const validMatches = state.validMatches.concat(...matchesById.filter(isValidMatch));
@@ -74,7 +80,7 @@ export class MatcherService {
     return result;
   }
 
-  private findNameMatchesForTransactions(state: MatchingState): MatchingState {
+  private findNameMatchesForTransactions(state: MatchState): MatchState {
     const matchesByName = state.remainingTransactions.map(transaction => {
       return {
         transaction,
