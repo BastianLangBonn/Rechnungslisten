@@ -5,7 +5,7 @@ import { Bill } from './types';
 @Injectable({
   providedIn: 'root'
 })
-export class StoreDataService {
+export class PersistenceService {
 
   constructor() {}
 

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BillCollectorService } from './bill-collector.service';
 import { MatcherService } from './matcher.service';
-import { StoreDataService } from './store-data.service';
+import { PersistenceService } from './persistence.service';
 import { TransactionCollectorService } from './transaction-collector.service';
 import { Bill, Transaction } from './types';
 
@@ -17,7 +17,7 @@ export class AppComponent implements OnInit {
 
   constructor(
     private billCollector: BillCollectorService,
-    private storeDataService: StoreDataService,
+    private storeDataService: PersistenceService,
     private transactionCollector: TransactionCollectorService,
     private matcher: MatcherService
   ) {}

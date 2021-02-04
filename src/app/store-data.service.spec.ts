@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { StoreDataService } from './store-data.service';
+import { PersistenceService } from './persistence.service';
 
-describe('StoreDataService', () => {
-  let service: StoreDataService;
+describe('PersistenceService', () => {
+  let service: PersistenceService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(StoreDataService);
+    service = TestBed.inject(PersistenceService);
   });
 
   it('should be created', () => {
