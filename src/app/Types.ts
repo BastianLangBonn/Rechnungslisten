@@ -5,8 +5,7 @@ export interface FileHeader {
     fields: string[];
   }
 
-export interface Bill {
-    amount: number;
+export interface Bill extends MoneyConstruct{
     amountStorno: number;
     id: string;
     canceled: string;
@@ -30,7 +29,7 @@ export interface Bill {
       country: string;
   }
 
-  export interface Transaction {
+  export interface Transaction extends MoneyConstruct{
     orderAccount: string;
     transactionDate: string;
     valutaData: string;
@@ -45,7 +44,6 @@ export interface Bill {
     payer: string;
     iban: string;
     bic: string;
-    amount: number;
     currency: string;
     info: string;
   }
@@ -55,7 +53,7 @@ export interface Bill {
     bills: Bill[];
   }
 
-  export interface MatchState {
+  export interface MatchResult {
     remainingBills: Bill[];
     remainingTransactions: Transaction[];
     filteredTransactions: Transaction[];
@@ -63,4 +61,8 @@ export interface Bill {
     invalidMatches: TransactionMatch[];
     initialTransactions: Transaction[];
     initialBills: Bill[];
+  }
+
+  export interface MoneyConstruct {
+    amount: number;
   }

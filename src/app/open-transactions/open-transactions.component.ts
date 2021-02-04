@@ -1,6 +1,7 @@
 import { ThrowStmt } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 import { cpuUsage } from 'process';
+import { compareAmount, compareAmountRev, comparePayer, comparePayerRev } from '../helper';
 import { MatcherService } from '../matcher.service';
 import { Transaction } from '../types';
 
@@ -10,12 +11,7 @@ import { Transaction } from '../types';
   styleUrls: ['./open-transactions.component.css']
 })
 export class OpenTransactionsComponent implements OnInit {
-
-  private compareAmount = (a: Transaction, b: Transaction) => a.amount < b.amount ? -1 : 1;
-  private compareAmountRev = (a: Transaction, b: Transaction) => this.compareAmount(b, a);
-  private comparePayer = (a: Transaction, b: Transaction) => a.payer < b.payer ? -1 : 1;
-  private comparePayerRev = (a: Transaction, b: Transaction) => this.comparePayer(b, a);
-  public comparer = this.compareAmount;
+  public comparer = compareAmount;
   public reverse = true;
 
   constructor(public matcher: MatcherService) { }
@@ -25,9 +21,9 @@ export class OpenTransactionsComponent implements OnInit {
 
   changeComparer(type: string): void {
     if(type === 'amount') {
-      this.comparer = this.reverse ? this.compareAmountRev : this.compareAmount;
+      this.comparer = this.reverse ? compareAmountRev : compareAmount;
     } else if(type === 'payer') {
-      this.comparer = this.reverse ? this.comparePayerRev : this.comparePayer;
+      this.comparer = this.reverse ? comparePayerRev : comparePayer;
     }
     this.reverse = !this.reverse;
   }

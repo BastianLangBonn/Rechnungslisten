@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { BillCollectorService } from './bill-collector.service';
 import { TransactionCollectorService } from './transaction-collector.service';
-import { Bill, MatchState as MatchState, Transaction, TransactionMatch } from './types';
+import { Bill, MatchResult, Transaction, TransactionMatch } from './types';
 
 const FILTERED_PAYERS = [
   'Kassenzahnarztliche Vereinigung Nordrhein',
@@ -16,7 +16,7 @@ const FILTERED_PAYERS = [
   'BSCARD',
 ];
 
-const EMPTY_STATE: MatchState = {
+const EMPTY_STATE: MatchResult = {
   initialTransactions: [],
   initialBills: [],
   remainingBills: [],
@@ -31,7 +31,7 @@ const EMPTY_STATE: MatchState = {
 })
 export class MatcherService {
 
-  public matches: MatchState = EMPTY_STATE;
+  public matches: MatchResult = EMPTY_STATE;
 
   constructor(private transactionCollector: TransactionCollectorService, private billCollector: BillCollectorService) {
     forkJoin([this.transactionCollector.transactions$,this.billCollector.bills$]).subscribe(([transactions, bills]) => {
@@ -39,16 +39,16 @@ export class MatcherService {
     });
    }
 
-  pipe = (...fns) => (x) => fns.reduce((v, f) => f(v), x);
+  private pipe = (...fns) => (x) => fns.reduce((v, f) => f(v), x);
 
-  private match(bills: Bill[], transactions: Transaction[]): MatchState {
-    const initialState: MatchState = EMPTY_STATE;
+  private match(bills: Bill[], transactions: Transaction[]): MatchResult {
+    const initialState: MatchResult = EMPTY_STATE;
     initialState.remainingBills = bills;
     initialState.remainingTransactions = transactions;
     initialState.initialBills = bills;
     initialState.initialTransactions = transactions;
 
-    const finalState: MatchState = this.pipe(
+    const finalState: MatchResult = this.pipe(
       this.filterNegativeTransactions,
       this.filterListedPayers,
       this.findIdMatchesForTransactions.bind(this),
@@ -59,7 +59,7 @@ export class MatcherService {
     return finalState;
   }
 
-  private filterNegativeTransactions(state: MatchState): MatchState {
+  private filterNegativeTransactions(state: MatchResult): MatchResult {
     return {
       ...state,
       remainingTransactions: state.remainingTransactions.filter(transaction => transaction.amount > 0),
@@ -67,7 +67,7 @@ export class MatcherService {
     }
   }
 
-  private filterListedPayers(state: MatchState): MatchState {
+  private filterListedPayers(state: MatchResult): MatchResult {
     return {
       ...state,
       remainingTransactions: state.remainingTransactions.filter(transaction => !FILTERED_PAYERS.includes(transaction.payer)),
@@ -75,7 +75,7 @@ export class MatcherService {
     }
   }
 
-  private findIdMatchesForTransactions(state: MatchState): MatchState {
+  private findIdMatchesForTransactions(state: MatchResult): MatchResult {
     const matchesById = state.remainingTransactions.map(transaction => this.findIdMatchesForTransaction(transaction, state.remainingBills)).filter(match => match.bills.length > 0);
     const isValidMatch = match => match.transaction.amount === match.bills.reduce((acc, curr) => acc + curr.amount, 0);
     const validMatches = state.validMatches.concat(...matchesById.filter(isValidMatch));
@@ -106,7 +106,7 @@ export class MatcherService {
     return result;
   }
 
-  private findNameMatchesForTransactions(state: MatchState): MatchState {
+  private findNameMatchesForTransactions(state: MatchResult): MatchResult {
     const matchesByName: TransactionMatch[] = state.remainingTransactions.map(transaction => {
       return {
         transaction,

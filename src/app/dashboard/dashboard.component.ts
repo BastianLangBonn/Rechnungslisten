@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatcherService } from '../matcher.service';
-import { MatchState } from '../types';
+import { PersistenceService } from '../persistence.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -9,10 +9,17 @@ import { MatchState } from '../types';
 })
 export class DashboardComponent implements OnInit {
 
-  constructor(public matcher: MatcherService) {
+  constructor(
+    public matcher: MatcherService,
+    private persistenceService: PersistenceService,
+  ) {
    }
 
   ngOnInit(): void {
+  }
+
+  public storeTables() {
+    this.persistenceService.storeMatches(this.matcher.matches);
   }
 
 }
