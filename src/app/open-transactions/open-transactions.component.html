@@ -6,6 +6,6 @@
     <div class="headerField" (click)="changeComparer('usage')">Verwendungszweck</div>
     <div class="headerField" (click)="changeComparer('date')">Buchungsdatum</div>
 </div>
-<div *ngFor="let transaction of matcher.matches.remainingTransactions.sort(comparer)">
-    {{transaction.amount}} | {{transaction.payer}} | {{transaction.usage}} | {{transaction.transactionDate}}
+<div *ngFor="let transaction of matcher.matches.remainingTransactions.sort(comparer), index as i">
+    <div routerLink="/assignBills/{{i}}">{{transaction.amount}} | {{transaction.payer}} | {{transaction.usage}} | {{transaction.transactionDate}}</div>
 </div>

@@ -8,14 +8,16 @@ import { RouterModule, Routes } from '@angular/router';
 import { AssignedTransactionsComponent } from './assigned-transactions/assigned-transactions.component';
 import { OpenTransactionsComponent } from './open-transactions/open-transactions.component';
 import { OpenBillsComponent } from './open-bills/open-bills.component';
+import { AssignBillsComponent } from './assign-bills/assign-bills.component';
 
 
 const routes: Routes = [
+  { path: '', redirectTo: '/dashboard', pathMatch: 'full'},
   { path: 'dashboard', component: DashboardComponent },
   { path: 'assignedTransactions', component: AssignedTransactionsComponent },
-  { path: 'openTransactions', component: OpenTransactionsComponent },
+  { path: 'openTransactions', component: OpenTransactionsComponent},
+  { path: 'assignBills/:id', component: AssignBillsComponent},
   { path: 'openBills', component: OpenBillsComponent },
-  { path: '', redirectTo: '/dashboard', pathMatch: 'full'},
 ];
 @NgModule({
   declarations: [
@@ -23,7 +25,8 @@ const routes: Routes = [
     DashboardComponent,
     AssignedTransactionsComponent,
     OpenTransactionsComponent,
-    OpenBillsComponent
+    OpenBillsComponent,
+    AssignBillsComponent
   ],
   imports: [
     BrowserModule,
