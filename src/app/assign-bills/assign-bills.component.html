@@ -8,13 +8,13 @@
         <div class="headerField">Buchungsdatum</div>
     </div>
     <div class="entry">
-        <div class="parameter" (click)="filterFor('amount');">
+        <div class="parameter">
             {{transaction.amount}}
         </div>
-        <div class="parameter" (click)="filterFor('payer');">
+        <div class="parameter">
             {{transaction.payer}}
         </div>
-        <div class="parameter" (click)="filterFor('rnr');">
+        <div class="parameter">
             {{transaction.usage}}
         </div>
         <div class="parameter">
@@ -23,11 +23,20 @@
     </div>
     <label for="commentBox">Kommentar: </label>
     <input #commentBox id="commentBox" placeholder="Keine passende Rechnung"/>
-    <button class="noMatch" (click)="commentBox.value !== '' ? removeTransaction(commentBox.value) : removeTransaction(commentBox.placeholder)">Entferne Zahlung</button>
+    <button class="noMatch"
+        (click)="commentBox.value !== '' ? removeTransaction(commentBox.value) : removeTransaction(commentBox.placeholder)"
+        routerLink="/openTransactions">
+        Keine passende Rechnung
+    </button>
 </div>
 <h2>Offene Rechnungen</h2>
-<h3>Filter</h3>
-<div>{{activeFilter}}</div>
+<h3>Mögliche Filter</h3>
+<div class="filters">
+    <div class="filter" (click)="filterFor('amount');">Betrag</div>
+    <div class="filter" (click)="filterFor('payer');">Kontoinhaber</div>
+    <div class="filter" (click)="filterFor('rnr');">Rechnungsnummer in Verwendungszweck</div>
+</div>
+<div>Aktiver Filter: {{activeFilter}}</div>
 <button class="clear" (click)="clearFilter()">Filter Zurücksetzen</button>
 <button class="assign" routerLink="/openTransactions" [disabled]="selectedBills.length === 0" (click)="assignBills()">Rechnungen Zuweisen</button>
 <div class="Bills">
@@ -46,10 +55,7 @@
                 {{bill.amount}}
             </div>
             <div class="parameter">
-                {{bill.lastName}}
-            </div>
-            <div class="parameter">
-                {{bill.firstName}}
+                {{bill.lastName}}, {{bill.firstName}}
             </div>
             <div class="parameter">
                 {{bill.date}}
