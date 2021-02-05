@@ -16,4 +16,20 @@ export const compareNameRev = (a: Bill, b: Bill) => compareName(b, a);
 export const comparePayer = (a: Transaction, b: Transaction) => a.payer < b.payer ? -1 : 1;
 export const comparePayerRev = (a: Transaction, b: Transaction) => comparePayer(b, a);
 
-
+export const changeComparer = (type: string, reversed: boolean) => {
+    if(type === 'rnr') {
+        return reversed ? compareIdRev : compareId;
+    }
+    if(type === 'amount') {
+        return reversed ? compareAmountRev : compareAmount;
+    }
+    if(type === 'name') {
+        return reversed ? compareNameRev : compareName;
+    }
+    if(type === 'amount') {
+        return reversed ? compareAmountRev : compareAmount;
+    }
+    if(type === 'payer') {
+        return reversed ? comparePayerRev : comparePayer;
+    }
+}

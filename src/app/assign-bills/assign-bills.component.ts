@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { changeComparer, compareAmount, compareAmountRev, compareId, compareIdRev, compareName, compareNameRev } from '../helper';
 import { MatcherService } from '../matcher.service';
 import { Transaction } from '../types';
 
@@ -11,6 +12,8 @@ import { Transaction } from '../types';
 export class AssignBillsComponent implements OnInit {
 
   public transaction: Transaction;
+  public comparer = compareId;
+  public reversed = true;
 
   constructor(
     private route: ActivatedRoute,
@@ -23,9 +26,12 @@ export class AssignBillsComponent implements OnInit {
 
   getTransaction(): void {
     const id = +this.route.snapshot.paramMap.get('id');
-    console.log('id', id);
     this.transaction = this.matcher.matches.remainingTransactions[id];
-    console.log('transaction', this.transaction);
+  }
+
+  changeComparer(type: string): void {
+    this.comparer = changeComparer(type, this.reversed);
+    this.reversed = !this.reversed;
   }
 
 }
