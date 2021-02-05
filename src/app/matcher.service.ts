@@ -21,6 +21,7 @@ const EMPTY_STATE: MatchResult = {
   initialBills: [],
   remainingBills: [],
   remainingTransactions: [],
+  notMatchingTransactions: [],
   filteredTransactions: [],
   validMatches: [],
   invalidMatches: [],
@@ -159,7 +160,15 @@ export class MatcherService {
       remainingTransactions: this.matches.remainingTransactions.filter(remainer => remainer.usage !== transaction.usage),
       remainingBills: this.matches.remainingBills.filter(bill => bills.every(b => b.id !== bill.id)),
     }
+  }
 
+  public markNotMatching(transaction: Transaction, comment: string) {
+    transaction.comment = comment;
+    this.matches = {
+      ...this.matches,
+      notMatchingTransactions: this.matches.notMatchingTransactions.concat(transaction),
+      remainingTransactions: this.matches.remainingTransactions.filter(t => t.usage !== transaction.usage),
+    }
   }
 
 }

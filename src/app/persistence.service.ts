@@ -13,7 +13,7 @@ export class PersistenceService {
 
   public storeMatches(match: MatchResult) {
     this.storeBills(match.remainingBills.sort(compareId), 'openBills.csv');
-    this.storeTransactions(match.remainingTransactions.sort(comparePayer), 'openTransactions.csv')
+    this.storeTransactions(match.notMatchingTransactions.sort(comparePayer), 'openTransactions.csv')
     this.storeBills(match.validMatches.reduce((acc, curr) => acc.concat(curr.bills), []).sort(compareId), 'closedBills.csv');
   }
 
@@ -25,8 +25,8 @@ export class PersistenceService {
   }
 
   private storeTransactions(transactions: Transaction[], filename: string) {
-    const header = 'Name;Betrag;Datum;Verwendungszweck\n';
-    const text: string[] = transactions.map(transaction => `${transaction.payer};${transaction.amount};${transaction.transactionDate};"${transaction.usage}"\n`);
+    const header = 'Name;Betrag;Datum;Verwendungszweck;Kommentar\n';
+    const text: string[] = transactions.map(transaction => `${transaction.payer};${transaction.amount};${transaction.transactionDate};"${transaction.usage}";"${transaction.comment}"\n`);
     const blob = new Blob([header, ...text], {type: 'text/plain;charset=utf-8'});
     FileSaver.saveAs(blob, filename);
   }

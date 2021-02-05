@@ -40,7 +40,6 @@ export class AssignBillsComponent implements OnInit {
   }
 
   filterFor(type: string) {
-    console.log('searchFor', type);
     this.clearSelection();
     const bills = this.matcher.matches.remainingBills;
     let filterFunction: (bill: Bill) => boolean;
@@ -84,6 +83,10 @@ export class AssignBillsComponent implements OnInit {
 
   assignBills(): void {
     this.matcher.addMatch(this.transaction, this.selectedBills.map(i => this.billsDisplayed[i]));
+  }
+
+  removeTransaction(comment: string) {
+    this.matcher.markNotMatching(this.transaction, comment);
   }
 
 }

@@ -21,6 +21,9 @@
             {{transaction.transactionDate}}
         </div>
     </div>
+    <label for="commentBox">Kommentar: </label>
+    <input #commentBox id="commentBox" placeholder="Keine passende Rechnung"/>
+    <button class="noMatch" (click)="commentBox.value !== '' ? removeTransaction(commentBox.value) : removeTransaction(commentBox.placeholder)">Entferne Zahlung</button>
 </div>
 <h2>Offene Rechnungen</h2>
 <h3>Filter</h3>

@@ -46,6 +46,7 @@ export interface Bill extends MoneyConstruct{
     bic: string;
     currency: string;
     info: string;
+    comment?: string;
   }
 
   export interface TransactionMatch {
@@ -56,6 +57,7 @@ export interface Bill extends MoneyConstruct{
   export interface MatchResult {
     remainingBills: Bill[];
     remainingTransactions: Transaction[];
+    notMatchingTransactions: Transaction[];
     filteredTransactions: Transaction[];
     validMatches: TransactionMatch[];
     invalidMatches: TransactionMatch[];
