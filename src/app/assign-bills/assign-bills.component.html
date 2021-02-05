@@ -1,1 +1,21 @@
-<p>assign-bills works!</p>
+<div class="back" routerLink="/openTransactions"><----</div>
+<div class="transaction">
+    <div class="header">
+        <div class="headerField">Betrag</div>
+        <div class="headerField">Kontoinhaber</div>
+        <div class="headerField">Verwendungszweck</div>
+        <div class="headerField">Buchungsdatum</div>
+    </div>
+    <div>{{transaction.amount}} | {{transaction.payer}} | {{transaction.usage}} | {{transaction.transactionDate}}</div>
+</div>
+<div class="Bills">
+    <div class="header">
+        <div class="headerField">Rechnungsnummer</div>
+        <div class="headerField">Betrag</div>
+        <div class="headerField">Name</div>
+        <div class="headerField">Datum</div>
+    </div>
+    <div *ngFor="let bill of matcher.matches.remainingBills">
+        {{bill.id}} | {{bill.amount}} | {{bill.lastName}}, {{bill.firstName}} | {{bill.date}}
+    </div>
+</div>

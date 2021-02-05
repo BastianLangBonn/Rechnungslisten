@@ -1,0 +1,13 @@
+.header {
+    display: flex;
+    flex-direction: row;
+}
+
+.headerField {
+    padding: 5px;
+    border-left: 1px solid black;
+}
+
+.headerField:first-of-type {
+    border-left: none;
+}
