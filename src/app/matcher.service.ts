@@ -93,7 +93,7 @@ export class MatcherService {
     }
   }
 
-  public findIdMatchesForTransaction(transaction: Transaction, bills: Bill[]): TransactionMatch {
+  private findIdMatchesForTransaction(transaction: Transaction, bills: Bill[]): TransactionMatch {
     const result: TransactionMatch = {
       transaction,
       bills: []
