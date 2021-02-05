@@ -25,7 +25,8 @@
 <h2>Offene Rechnungen</h2>
 <h3>Filter</h3>
 <div>{{activeFilter}}</div>
-<button class="clear" (click)="clearFilter()">Clear Filter</button>
+<button class="clear" (click)="clearFilter()">Filter Zurücksetzen</button>
+<button class="assign" routerLink="/openTransactions" [disabled]="selectedBills.length === 0" (click)="assignBills()">Rechnungen Zuweisen</button>
 <div class="Bills">
     <div class="header">
         <div class="headerField" (click)="changeComparer('rnr')">Rechnungsnummer</div>

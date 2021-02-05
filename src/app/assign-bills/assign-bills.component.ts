@@ -41,9 +41,15 @@ export class AssignBillsComponent implements OnInit {
 
   filterFor(type: string) {
     console.log('searchFor', type);
+    this.clearSelection();
     const bills = this.matcher.matches.remainingBills;
     let filterFunction: (bill: Bill) => boolean;
-    if( type === 'amount' ) {
+    if( type === this.activeFilter ) {
+      this.activeFilter = '';
+      this.billsDisplayed = bills;
+      return;
+    }
+    if( type === 'amount') {
       filterFunction = bill => this.transaction.amount === bill.amount;
     } else if( type === 'payer') {
       filterFunction = bill => this.transaction.payer.toUpperCase().includes(bill.lastName.toUpperCase());
@@ -55,21 +61,29 @@ export class AssignBillsComponent implements OnInit {
     this.billsDisplayed = bills.filter(filterFunction);
   }
 
-  clearFilter() {
+  private clearSelection(): void {
+    this.selectedBills = [];
+  }
+
+  clearFilter(): void {
     this.activeFilter = '';
     this.billsDisplayed = this.matcher.matches.remainingBills;
   }
 
-  isSelected(index: number) {
+  isSelected(index: number): boolean {
     return this.selectedBills.includes(index);
   }
 
-  selectBill(index: number) {
+  selectBill(index: number): void {
     if( this.isSelected(index) ) {
       this.selectedBills = this.selectedBills.filter(i => i !== index);
     } else {
       this.selectedBills.push(index);
     }
+  }
+
+  assignBills(): void {
+    this.matcher.addMatch(this.transaction, this.selectedBills.map(i => this.billsDisplayed[i]));
   }
 
 }

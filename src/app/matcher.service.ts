@@ -152,4 +152,14 @@ export class MatcherService {
     }).filter(match => match.bills.length > 0);
   }
 
+  public addMatch(transaction: Transaction, bills: Bill[]): void {
+    this.matches = {
+      ...this.matches,
+      validMatches: this.matches.validMatches.concat({transaction, bills}),
+      remainingTransactions: this.matches.remainingTransactions.filter(remainer => remainer.usage !== transaction.usage),
+      remainingBills: this.matches.remainingBills.filter(bill => bills.every(b => b.id !== bill.id)),
+    }
+
+  }
+
 }
