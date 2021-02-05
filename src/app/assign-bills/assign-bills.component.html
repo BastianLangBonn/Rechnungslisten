@@ -34,7 +34,7 @@
         <div class="headerField">Datum</div>
     </div>
     <div *ngFor="let bill of billsDisplayed.sort(this.comparer), index as i">
-        <div class="entry" [class.selected]="i === highlightedBillId">
+        <div class="entry" [class.selected]="isSelected(i)" (click)="selectBill(i)">
             <div class="parameter">
                 {{bill.id}}
             </div>

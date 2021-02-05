@@ -17,6 +17,7 @@ export class AssignBillsComponent implements OnInit {
   public reversed = true;
   public billsDisplayed: Bill[];
   public activeFilter = '';
+  public selectedBills: number[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -57,6 +58,18 @@ export class AssignBillsComponent implements OnInit {
   clearFilter() {
     this.activeFilter = '';
     this.billsDisplayed = this.matcher.matches.remainingBills;
+  }
+
+  isSelected(index: number) {
+    return this.selectedBills.includes(index);
+  }
+
+  selectBill(index: number) {
+    if( this.isSelected(index) ) {
+      this.selectedBills = this.selectedBills.filter(i => i !== index);
+    } else {
+      this.selectedBills.push(index);
+    }
   }
 
 }
