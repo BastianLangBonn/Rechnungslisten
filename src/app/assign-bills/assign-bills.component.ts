@@ -1,8 +1,9 @@
+import { ThrowStmt } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { changeComparer, compareAmount, compareAmountRev, compareId, compareIdRev, compareName, compareNameRev } from '../helper';
 import { MatcherService } from '../matcher.service';
-import { Transaction } from '../types';
+import { Bill, Transaction } from '../types';
 
 @Component({
   selector: 'app-assign-bills',
@@ -14,6 +15,8 @@ export class AssignBillsComponent implements OnInit {
   public transaction: Transaction;
   public comparer = compareId;
   public reversed = true;
+  public billsDisplayed: Bill[];
+  public activeFilter = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -27,11 +30,33 @@ export class AssignBillsComponent implements OnInit {
   getTransaction(): void {
     const id = +this.route.snapshot.paramMap.get('id');
     this.transaction = this.matcher.matches.remainingTransactions[id];
+    this.billsDisplayed = this.matcher.matches.remainingBills;
   }
 
   changeComparer(type: string): void {
     this.comparer = changeComparer(type, this.reversed);
     this.reversed = !this.reversed;
+  }
+
+  filterFor(type: string) {
+    console.log('searchFor', type);
+    const bills = this.matcher.matches.remainingBills;
+    let filterFunction: (bill: Bill) => boolean;
+    if( type === 'amount' ) {
+      filterFunction = bill => this.transaction.amount === bill.amount;
+    } else if( type === 'payer') {
+      filterFunction = bill => this.transaction.payer.toUpperCase().includes(bill.lastName.toUpperCase());
+    } else if( type === 'rnr') {
+      const numbersInUsage = this.transaction.usage.match(/\d+/g);
+      filterFunction = bill => numbersInUsage.includes(bill.id);
+    }
+    this.activeFilter = type;
+    this.billsDisplayed = bills.filter(filterFunction);
+  }
+
+  clearFilter() {
+    this.activeFilter = '';
+    this.billsDisplayed = this.matcher.matches.remainingBills;
   }
 
 }

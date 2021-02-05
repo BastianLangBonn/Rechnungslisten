@@ -1,4 +1,5 @@
 <div class="back" routerLink="/openTransactions"><----</div>
+<h1>Zahlung</h1>
 <div class="transaction">
     <div class="header">
         <div class="headerField">Betrag</div>
@@ -6,8 +7,25 @@
         <div class="headerField">Verwendungszweck</div>
         <div class="headerField">Buchungsdatum</div>
     </div>
-    <div>{{transaction.amount}} | {{transaction.payer}} | {{transaction.usage}} | {{transaction.transactionDate}}</div>
+    <div class="entry">
+        <div class="parameter" (click)="filterFor('amount');">
+            {{transaction.amount}}
+        </div>
+        <div class="parameter" (click)="filterFor('payer');">
+            {{transaction.payer}}
+        </div>
+        <div class="parameter" (click)="filterFor('rnr');">
+            {{transaction.usage}}
+        </div>
+        <div class="parameter">
+            {{transaction.transactionDate}}
+        </div>
+    </div>
 </div>
+<h2>Offene Rechnungen</h2>
+<h3>Filter</h3>
+<div>{{activeFilter}}</div>
+<button class="clear" (click)="clearFilter()">Clear Filter</button>
 <div class="Bills">
     <div class="header">
         <div class="headerField" (click)="changeComparer('rnr')">Rechnungsnummer</div>
@@ -15,7 +33,23 @@
         <div class="headerField" (click)="changeComparer('name')">Name</div>
         <div class="headerField">Datum</div>
     </div>
-    <div *ngFor="let bill of matcher.matches.remainingBills.sort(this.comparer)">
-        {{bill.id}} | {{bill.amount}} | {{bill.lastName}}, {{bill.firstName}} | {{bill.date}}
+    <div *ngFor="let bill of billsDisplayed.sort(this.comparer), index as i">
+        <div class="entry" [class.selected]="i === highlightedBillId">
+            <div class="parameter">
+                {{bill.id}}
+            </div>
+            <div class="parameter">
+                {{bill.amount}}
+            </div>
+            <div class="parameter">
+                {{bill.lastName}}
+            </div>
+            <div class="parameter">
+                {{bill.firstName}}
+            </div>
+            <div class="parameter">
+                {{bill.date}}
+            </div>
+        </div>
     </div>
 </div>

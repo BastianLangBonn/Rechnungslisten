@@ -1,9 +1,6 @@
-import { ThrowStmt } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
-import { cpuUsage } from 'process';
 import { changeComparer, compareAmount, compareAmountRev, comparePayer, comparePayerRev } from '../helper';
 import { MatcherService } from '../matcher.service';
-import { Transaction } from '../types';
 
 @Component({
   selector: 'app-open-transactions',

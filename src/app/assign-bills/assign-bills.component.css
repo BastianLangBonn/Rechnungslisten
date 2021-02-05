@@ -11,3 +11,16 @@
 .headerField:first-of-type {
     border-left: none;
 }
+
+.entry {
+    display: flex;
+    flex-direction: row;
+}
+
+.parameter {
+    padding: 5px;
+}
+
+.selected {
+    background-color: #0000aa99;
+}
