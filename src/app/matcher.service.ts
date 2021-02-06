@@ -1,4 +1,3 @@
-import { ThrowStmt } from '@angular/compiler';
 import { Injectable } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { BillCollectorService } from './bill-collector.service';
@@ -77,8 +76,12 @@ export class MatcherService {
   }
 
   private findIdMatchesForTransactions(state: MatchResult): MatchResult {
-    const matchesById = state.remainingTransactions.map(transaction => this.findIdMatchesForTransaction(transaction, state.remainingBills)).filter(match => match.bills.length > 0);
-    const isValidMatch = match => match.transaction.amount === match.bills.reduce((acc, curr) => acc + curr.amount, 0);
+    const matchesById = state.remainingTransactions.map(
+      transaction => this.findIdMatchesForTransaction(
+        transaction, state.remainingBills))
+      .filter(match => match.bills.length > 0
+    );
+    const isValidMatch = match => match.transaction.amount - match.bills.reduce((acc, curr) => acc + curr.amount, 0) < 0.01;
     const validMatches = state.validMatches.concat(...matchesById.filter(isValidMatch));
     const invalidMatches = state.invalidMatches.concat(...matchesById.filter(match => !isValidMatch(match)))
     const assignedTransactions = validMatches.map(match => match.transaction);
