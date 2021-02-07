@@ -1,0 +1,13 @@
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+.field {
+    padding: 5px;
+    border-left: 1px solid black;
+}
+
+.field:first-of-type {
+    border-left: none;
+}

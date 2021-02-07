@@ -9,6 +9,7 @@ import { AssignedTransactionsComponent } from './assigned-transactions/assigned-
 import { OpenTransactionsComponent } from './open-transactions/open-transactions.component';
 import { OpenBillsComponent } from './open-bills/open-bills.component';
 import { AssignBillsComponent } from './assign-bills/assign-bills.component';
+import { BillsComponent } from './bills/bills.component';
 
 
 const routes: Routes = [
@@ -26,7 +27,8 @@ const routes: Routes = [
     AssignedTransactionsComponent,
     OpenTransactionsComponent,
     OpenBillsComponent,
-    AssignBillsComponent
+    AssignBillsComponent,
+    BillsComponent
   ],
   imports: [
     BrowserModule,
