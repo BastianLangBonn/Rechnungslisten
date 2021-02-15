@@ -14,6 +14,7 @@ import { InitialTransactionsComponent } from './initial-transactions/initial-tra
 import { InitialBillsComponent } from './initial-bills/initial-bills.component';
 import { FilteredTransactionsComponent } from './filtered-transactions/filtered-transactions.component';
 import { InvalidMatchesComponent } from './invalid-matches/invalid-matches.component';
+import { TransactionsComponent } from './transactions/transactions.component';
 
 
 const routes: Routes = [
@@ -40,7 +41,8 @@ const routes: Routes = [
     InitialTransactionsComponent,
     InitialBillsComponent,
     FilteredTransactionsComponent,
-    InvalidMatchesComponent
+    InvalidMatchesComponent,
+    TransactionsComponent
   ],
   imports: [
     BrowserModule,

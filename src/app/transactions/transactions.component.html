@@ -1,11 +1,9 @@
-<h1>Übrige Zahlungen</h1>
-<div routerLink="/dashboard"><h2><---</h2></div>
 <div class="header">
     <span class="headerField" (click)="changeComparer('amount')">Betrag</span>
     <span class="headerField" (click)="changeComparer('payer')">Kontoinhaber</span>
     <span class="headerField" (click)="changeComparer('usage')">Verwendungszweck</span>
     <span class="headerField" (click)="changeComparer('date')">Buchungsdatum</span>
 </div>
-<div *ngFor="let transaction of matcher.matches.remainingTransactions.sort(comparer), index as i">
-    <div routerLink="/assignBills/{{i}}">{{transaction.amount}} | {{transaction.payer}} | {{transaction.usage}} | {{transaction.transactionDate}}</div>
+<div *ngFor="let transaction of transactions.sort(comparer)">
+    <div>{{transaction.amount}} | {{transaction.payer}} | {{transaction.usage}} | {{transaction.transactionDate}}</div>
 </div>

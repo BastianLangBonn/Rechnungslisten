@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { compareId } from '../helper';
+import { MatcherService } from '../matcher.service';
+import { Transaction } from '../types';
 
 @Component({
   selector: 'app-initial-transactions',
@@ -7,9 +10,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class InitialTransactionsComponent implements OnInit {
 
-  constructor() { }
+  comparer = compareId;
+  transactions: Transaction[];
+
+  constructor(private matcher: MatcherService) { }
 
   ngOnInit(): void {
+    this.transactions = this.matcher.matches.initialTransactions;
   }
 
 }
