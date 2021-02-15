@@ -6,15 +6,15 @@ export interface FileHeader {
   }
 
 export interface Bill extends MoneyConstruct{
-    amountStorno: number;
     id: string;
-    canceled: string;
     clientId: number;
     date: string;
-    taxApplied: number;
-    taxFull: number;
-    taxDifferent: string;
-    taxReduced: number;
+    amountStorno?: number;
+    canceled?: string;
+    taxApplied?: number;
+    taxFull?: number;
+    taxDifferent?: string;
+    taxReduced?: number;
     firstName?: string;
     lastName?: string;
   }
@@ -27,6 +27,19 @@ export interface Bill extends MoneyConstruct{
       zip: string;
       city: string;
       country: string;
+  }
+
+  export interface Payment {
+    billId: string;
+    receiptNumber: number;
+    paymentDate: string;
+    clientId: number;
+    process: string;
+    amount: number;
+    sourceAccount: number;
+    contraAccount: number;
+    changeDate: string;
+    changeTime: number;
   }
 
   export interface Transaction extends MoneyConstruct{

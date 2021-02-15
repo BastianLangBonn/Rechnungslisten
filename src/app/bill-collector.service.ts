@@ -4,7 +4,7 @@ import { forkJoin, from, Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import * as xml2js from 'xml2js';
 import { CommonUtilsService } from './common-utils.service';
-import { Bill, Client, FileHeader } from './types';
+import { Bill, Client, FileHeader, Payment } from './types';
 
 @Injectable({
   providedIn: 'root'
@@ -28,11 +28,13 @@ export class BillCollectorService {
 
   private handleJsonData(json): Observable<Bill[]> {
     const fileHeaders = this.readFileHeadersFromJson(json);
-    const billsHeader = fileHeaders.filter(header => header.url === 'rechnungen.txt')[0];
+    // const billsHeader = fileHeaders.filter(header => header.url === 'rechnungen.txt')[0];
     const clientsHeader = fileHeaders.filter(header => header.url === 'patienten.txt')[0];
-    const clientsData$ = this.processFile(clientsHeader, this.handleClients.bind(this));
-    const billsData$ = this.processFile(billsHeader, this.handleBills.bind(this));
-    return forkJoin([clientsData$, billsData$]).pipe(
+    const paymentsHeader = fileHeaders.filter(header => header.url === 'zahlungen.txt')[0];
+    const clientsData$: Observable<Client[]> = this.processFile(clientsHeader, this.handleClients.bind(this));
+    // const billsData$: Observable<Bill[]> = this.processFile(billsHeader, this.handleBills.bind(this));
+    const paymentsData$: Observable<Bill[]> = this.processFile(paymentsHeader, this.handlePayments.bind(this));
+    return forkJoin([clientsData$, paymentsData$]).pipe(
       map(data => this.enrichBillsData(data[0], data[1]))
     );
   }
@@ -76,22 +78,61 @@ export class BillCollectorService {
     return refinedClients;
   }
 
-  private handleBills(header: FileHeader, content: string[][]): Bill[] {
+  // private handleBills(header: FileHeader, content: string[][]): Bill[] {
+  //   return content.map(line => {
+  //     const getEntry = (identifier: string) => line[header.fields.indexOf(identifier)];
+  //     const getStringEntry = (identifier: string) => getEntry(identifier).slice(1, -1).trim();
+  //     const getNumberEntry = (identifier: string) => +getEntry(identifier).replace(',','.');
+  //     return {
+  //       amount: getNumberEntry('Betrag'),
+  //       amountStorno: getNumberEntry('St_Betrag'),
+  //       id: getStringEntry('rnr'),
+  //       canceled: getStringEntry('Storniert'),
+  //       clientId: +getStringEntry('Patnr'),
+  //       date: getEntry('datum'),
+  //       taxApplied: getNumberEntry('Mwst'),
+  //       taxFull: getNumberEntry('MwstSatz'),
+  //       taxDifferent: getStringEntry('AndererMwst'),
+  //       taxReduced: getNumberEntry('MwstSatzErm'),
+  //     };
+  //   });
+  // }
+
+  private handlePayments(header: FileHeader, content: string[][]): Bill[] {
+    const payments = this.contentToPayments(header, content);
+    return this.paymentsToBills(payments);
+  }
+
+  private contentToPayments(header: FileHeader, content: string[][]): Payment[] {
     return content.map(line => {
       const getEntry = (identifier: string) => line[header.fields.indexOf(identifier)];
       const getStringEntry = (identifier: string) => getEntry(identifier).slice(1, -1).trim();
       const getNumberEntry = (identifier: string) => +getEntry(identifier).replace(',','.');
       return {
+        billId: getEntry('rnr'),
+        receiptNumber: getNumberEntry('belegnr'),
+        paymentDate: getEntry('datum'),
+        clientId: getNumberEntry('Patnr'),
+        process: getStringEntry('vorgang'),
         amount: getNumberEntry('Betrag'),
-        amountStorno: getNumberEntry('St_Betrag'),
-        id: getStringEntry('rnr'),
-        canceled: getStringEntry('Storniert'),
-        clientId: +getStringEntry('Patnr'),
-        date: getEntry('datum'),
-        taxApplied: getNumberEntry('Mwst'),
-        taxFull: getNumberEntry('MwstSatz'),
-        taxDifferent: getStringEntry('AndererMwst'),
-        taxReduced: getNumberEntry('MwstSatzErm'),
+        sourceAccount: getNumberEntry('kontonr'),
+        contraAccount: getNumberEntry('gegenkonto'),
+        changeDate: getEntry('date'),
+        changeTime: getNumberEntry('time'),
+      };
+    });
+  }
+
+  private paymentsToBills(payments: Payment[]): Bill[] {
+    const bills = payments.filter(payment => payment.process === 'Rechnungsstellung');
+    const warnings = payments.filter(payment => payment.process === 'Mahnung');
+    return bills.map(bill => {
+      const amount = bill.amount + warnings.filter(warning => warning.billId === bill.billId).reduce((acc, curr) => acc + curr.amount, 0);
+      return {
+        amount,
+        clientId: bill.clientId,
+        id: bill.billId,
+        date: bill.paymentDate,
       };
     });
   }
