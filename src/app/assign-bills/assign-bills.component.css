@@ -12,9 +12,15 @@
     border-left: none;
 }
 
-.entry {
+.transaction {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #eee;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
 }
 
 .parameter {

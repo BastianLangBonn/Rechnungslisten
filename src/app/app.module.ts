@@ -15,6 +15,7 @@ import { InitialBillsComponent } from './initial-bills/initial-bills.component';
 import { FilteredTransactionsComponent } from './filtered-transactions/filtered-transactions.component';
 import { InvalidMatchesComponent } from './invalid-matches/invalid-matches.component';
 import { TransactionsComponent } from './transactions/transactions.component';
+import { NotMatchedTransactionsComponent } from './not-matched-transactions/not-matched-transactions.component';
 
 
 const routes: Routes = [
@@ -24,6 +25,7 @@ const routes: Routes = [
   { path: 'assignedTransactions', component: AssignedTransactionsComponent },
   { path: 'filteredTransactions', component: FilteredTransactionsComponent },
   { path: 'openTransactions', component: OpenTransactionsComponent},
+  { path: 'notMatchedTransactions', component: NotMatchedTransactionsComponent},
   { path: 'initialBills', component: InitialBillsComponent },
   { path: 'assignBills/:id', component: AssignBillsComponent},
   { path: 'openBills', component: OpenBillsComponent },
@@ -42,7 +44,8 @@ const routes: Routes = [
     InitialBillsComponent,
     FilteredTransactionsComponent,
     InvalidMatchesComponent,
-    TransactionsComponent
+    TransactionsComponent,
+    NotMatchedTransactionsComponent
   ],
   imports: [
     BrowserModule,

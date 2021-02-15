@@ -1,34 +1,26 @@
 <div class="back" routerLink="/openTransactions"><----</div>
 <h1>Zahlung</h1>
 <div class="transaction">
-    <div class="header">
-        <div class="headerField">Betrag</div>
-        <div class="headerField">Kontoinhaber</div>
-        <div class="headerField">Verwendungszweck</div>
-        <div class="headerField">Buchungsdatum</div>
+    <div class="parameter">
+        <span class="headerField">Betrag: </span><span>{{transaction.amount}}</span>
     </div>
-    <div class="entry">
-        <div class="parameter">
-            {{transaction.amount}}
-        </div>
-        <div class="parameter">
-            {{transaction.payer}}
-        </div>
-        <div class="parameter">
-            {{transaction.usage}}
-        </div>
-        <div class="parameter">
-            {{transaction.transactionDate}}
-        </div>
+    <div class="parameter">
+        <span class="headerField">Kontoinhaber: </span><span>{{transaction.payer}}</span>
     </div>
-    <label for="commentBox">Kommentar: </label>
-    <input #commentBox id="commentBox" placeholder="Keine passende Rechnung"/>
-    <button class="noMatch"
-        (click)="commentBox.value !== '' ? removeTransaction(commentBox.value) : removeTransaction(commentBox.placeholder)">
-        Keine passende Rechnung
-    </button>
-    <div class="remaining">Verbleibende Zahlungen: {{matcher.matches.remainingTransactions.length}}</div>
+    <div class="parameter">
+        <span class="headerField">Verwendungszweck: </span><span>{{transaction.usage}}</span>
+    </div>
+    <div class="parameter">
+        <span class="headerField">Buchungsdatum: </span><span>{{transaction.transactionDate}}</span>
+    </div>
 </div>
+<label for="commentBox">Kommentar: </label>
+<input #commentBox id="commentBox" placeholder="Keine passende Rechnung"/>
+<button class="noMatch"
+    (click)="commentBox.value !== '' ? removeTransaction(commentBox.value) : removeTransaction(commentBox.placeholder)">
+    Keine passende Rechnung
+</button>
+<div class="remaining">Verbleibende Zahlungen: {{matcher.matches.remainingTransactions.length}}</div>
 <h2>Offene Rechnungen</h2>
 <button class="assign" [disabled]="selectedBills.length === 0" (click)="assignBills()">Rechnungen Zuweisen</button>
 <div class="header">
