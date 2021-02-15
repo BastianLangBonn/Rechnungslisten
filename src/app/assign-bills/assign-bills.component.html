@@ -30,36 +30,67 @@
     <div class="remaining">Verbleibende Zahlungen: {{matcher.matches.remainingTransactions.length}}</div>
 </div>
 <h2>Offene Rechnungen</h2>
-<h3>Mögliche Filter</h3>
-<div class="filters">
-    <div class="filter" (click)="filterFor('amount');">Betrag</div>
-    <div class="filter" (click)="filterFor('payer');">Kontoinhaber</div>
-    <div class="filter" (click)="filterFor('rnr');">Rechnungsnummer in Verwendungszweck</div>
-</div>
-<div>Aktiver Filter: {{activeFilter}}</div>
-<button class="clear" (click)="clearFilter()">Filter Zurücksetzen</button>
 <button class="assign" [disabled]="selectedBills.length === 0" (click)="assignBills()">Rechnungen Zuweisen</button>
-<div class="Bills">
-    <div class="header">
-        <div class="headerField" (click)="changeComparer('rnr')">Rechnungsnummer</div>
-        <div class="headerField" (click)="changeComparer('amount')">Betrag</div>
-        <div class="headerField" (click)="changeComparer('name')">Name</div>
-        <div class="headerField">Datum</div>
-    </div>
-    <div *ngFor="let bill of billsDisplayed.sort(comparer), index as i">
-        <div class="entry" [class.selected]="isSelected(i)" (click)="selectBill(i)">
-            <div class="parameter">
+<div class="header">
+    <span class="headerField" (click)="changeComparer('rnr')">Rechnungsnummer</span>
+    <span class="headerField" (click)="changeComparer('amount')">Betrag</span>
+    <span class="headerField" (click)="changeComparer('name')">Name</span>
+    <span class="headerField">Datum</span>
+</div>
+<h3>Passender Betrag</h3>
+<div class="Amount">
+    <div *ngFor="let bill of matcher.matches.remainingBills.filter(filterForAmount).sort(comparer)">
+        <div class="entry" [class.selected]="isSelected(bill)" (click)="selectBill(bill)">
+            <span class="parameter">
                 {{bill.id}}
-            </div>
-            <div class="parameter">
+            </span>
+            <span class="parameter">
                 {{bill.amount}}
-            </div>
-            <div class="parameter">
+            </span>
+            <span class="parameter">
                 {{bill.lastName}}, {{bill.firstName}}
-            </div>
-            <div class="parameter">
+            </span>
+            <span class="parameter">
                 {{bill.date}}
-            </div>
+            </span>
+        </div>
+    </div>
+</div>
+<h3>Passender Kontoinhaber</h3>
+<div class="Payer">
+    <div *ngFor="let bill of matcher.matches.remainingBills.filter(filterForPayer).sort(comparer)">
+        <div class="entry" [class.selected]="isSelected(bill)" (click)="selectBill(bill)">
+            <span class="parameter">
+                {{bill.id}}
+            </span>
+            <span class="parameter">
+                {{bill.amount}}
+            </span>
+            <span class="parameter">
+                {{bill.lastName}}, {{bill.firstName}}
+            </span>
+            <span class="parameter">
+                {{bill.date}}
+            </span>
+        </div>
+    </div>
+</div>
+<h3>Rechnungsnummer in Verwendungszweck</h3>
+<div class="BillId">
+    <div *ngFor="let bill of matcher.matches.remainingBills.filter(filterForBillId).sort(comparer)">
+        <div class="entry" [class.selected]="isSelected(bill)" (click)="selectBill(bill)">
+            <span class="parameter">
+                {{bill.id}}
+            </span>
+            <span class="parameter">
+                {{bill.amount}}
+            </span>
+            <span class="parameter">
+                {{bill.lastName}}, {{bill.firstName}}
+            </span>
+            <span class="parameter">
+                {{bill.date}}
+            </span>
         </div>
     </div>
 </div>

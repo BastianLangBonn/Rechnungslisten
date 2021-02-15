@@ -24,18 +24,3 @@
 .selected {
     background-color: #0000aa99;
 }
-
-.filters {
-    display: flex;
-    flex-direction: row;
-}
-
-.filter {
-    padding: 5px;
-    border-left: 1px solid black;
-    cursor: pointer;
-}
-
-.filter:first-of-type {
-    border-left: none;
-}

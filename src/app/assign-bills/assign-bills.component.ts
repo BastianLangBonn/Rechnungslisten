@@ -15,9 +15,10 @@ export class AssignBillsComponent implements OnInit {
   public transaction: Transaction;
   public comparer: ((a: Bill, b: Bill) => number) = compareId;
   public reversed = true;
-  public billsDisplayed: Bill[];
-  public activeFilter = '';
-  public selectedBills: number[] = [];
+  public selectedBills: Bill[] = [];
+  filterForAmount = (bill: Bill) => this.transaction.amount === bill.amount;
+  filterForPayer = (bill: Bill) => this.transaction.payer.toUpperCase().includes(bill.lastName.toUpperCase());
+  filterForBillId = (bill: Bill) => this.transaction.usage.match(/\d+/g).includes(bill.id);
 
   constructor(
     private route: ActivatedRoute,
@@ -33,7 +34,6 @@ export class AssignBillsComponent implements OnInit {
     const id = +this.route.snapshot.paramMap.get('id');
     console.log(id);
     this.transaction = this.matcher.matches.remainingTransactions[id];
-    this.billsDisplayed = this.matcher.matches.remainingBills;
   }
 
   changeComparer(type: string): void {
@@ -41,50 +41,20 @@ export class AssignBillsComponent implements OnInit {
     this.reversed = !this.reversed;
   }
 
-  filterFor(type: string) {
-    this.clearSelection();
-    const bills = this.matcher.matches.remainingBills;
-    let filterFunction: (bill: Bill) => boolean;
-    if( type === this.activeFilter ) {
-      this.activeFilter = '';
-      this.billsDisplayed = bills;
-      return;
-    }
-    if( type === 'amount') {
-      filterFunction = bill => this.transaction.amount === bill.amount;
-    } else if( type === 'payer') {
-      filterFunction = bill => this.transaction.payer.toUpperCase().includes(bill.lastName.toUpperCase());
-    } else if( type === 'rnr') {
-      const numbersInUsage = this.transaction.usage.match(/\d+/g);
-      filterFunction = bill => numbersInUsage.includes(bill.id);
-    }
-    this.activeFilter = type;
-    this.billsDisplayed = bills.filter(filterFunction);
+  isSelected(bill: Bill): boolean {
+    return this.selectedBills.includes(bill);
   }
 
-  private clearSelection(): void {
-    this.selectedBills = [];
-  }
-
-  clearFilter(): void {
-    this.activeFilter = '';
-    this.billsDisplayed = this.matcher.matches.remainingBills;
-  }
-
-  isSelected(index: number): boolean {
-    return this.selectedBills.includes(index);
-  }
-
-  selectBill(index: number): void {
-    if( this.isSelected(index) ) {
-      this.selectedBills = this.selectedBills.filter(i => i !== index);
+  selectBill(bill: Bill): void {
+    if( this.isSelected(bill) ) {
+      this.selectedBills = this.selectedBills.filter(b => b.id !== bill.id);
     } else {
-      this.selectedBills.push(index);
+      this.selectedBills.push(bill);
     }
   }
 
   assignBills(): void {
-    this.matcher.addMatch(this.transaction, this.selectedBills.map(i => this.billsDisplayed[i]));
+    this.matcher.addMatch(this.transaction, this.selectedBills);
     this.getNextTransaction();
   }
 
@@ -99,7 +69,6 @@ export class AssignBillsComponent implements OnInit {
       return;
     }
     this.transaction = this.matcher.matches.remainingTransactions[0];
-    this.billsDisplayed = this.matcher.matches.remainingBills;
     this.selectedBills = [];
   }
 
