@@ -10,15 +10,23 @@ import { OpenTransactionsComponent } from './open-transactions/open-transactions
 import { OpenBillsComponent } from './open-bills/open-bills.component';
 import { AssignBillsComponent } from './assign-bills/assign-bills.component';
 import { BillsComponent } from './bills/bills.component';
+import { InitialTransactionsComponent } from './initial-transactions/initial-transactions.component';
+import { InitialBillsComponent } from './initial-bills/initial-bills.component';
+import { FilteredTransactionsComponent } from './filtered-transactions/filtered-transactions.component';
+import { InvalidMatchesComponent } from './invalid-matches/invalid-matches.component';
 
 
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full'},
   { path: 'dashboard', component: DashboardComponent },
+  { path: 'initialTransactions', component: InitialTransactionsComponent },
   { path: 'assignedTransactions', component: AssignedTransactionsComponent },
+  { path: 'filteredTransactions', component: FilteredTransactionsComponent },
   { path: 'openTransactions', component: OpenTransactionsComponent},
+  { path: 'initialBills', component: InitialBillsComponent },
   { path: 'assignBills/:id', component: AssignBillsComponent},
   { path: 'openBills', component: OpenBillsComponent },
+  { path: 'invalidMatches', component: InvalidMatchesComponent },
 ];
 @NgModule({
   declarations: [
@@ -28,7 +36,11 @@ const routes: Routes = [
     OpenTransactionsComponent,
     OpenBillsComponent,
     AssignBillsComponent,
-    BillsComponent
+    BillsComponent,
+    InitialTransactionsComponent,
+    InitialBillsComponent,
+    FilteredTransactionsComponent,
+    InvalidMatchesComponent
   ],
   imports: [
     BrowserModule,
