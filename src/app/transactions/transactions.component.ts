@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { changeComparer, compareId } from '../helper';
-import { MatcherService } from '../matcher.service';
 import { Transaction } from '../types';
 
 @Component({
@@ -16,7 +15,7 @@ export class TransactionsComponent implements OnInit {
   comparer = compareId;
   reverse = true;
 
-  constructor(private matcher: MatcherService) { }
+  constructor() { }
 
   ngOnInit(): void {}
 
