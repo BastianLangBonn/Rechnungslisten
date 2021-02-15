@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { MatcherService } from '../matcher.service';
+import { Bill } from '../types';
 
 @Component({
   selector: 'app-initial-bills',
@@ -7,9 +9,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class InitialBillsComponent implements OnInit {
 
-  constructor() { }
+  bills: Bill[];
+
+  constructor(private matcher: MatcherService) { }
 
   ngOnInit(): void {
+    this.bills = this.matcher.matches.initialBills;
   }
 
 }
