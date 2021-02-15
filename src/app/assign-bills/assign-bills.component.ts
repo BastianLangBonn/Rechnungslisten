@@ -1,6 +1,6 @@
 import { ThrowStmt } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { changeComparer, compareAmount, compareAmountRev, compareId, compareIdRev, compareName, compareNameRev } from '../helper';
 import { MatcherService } from '../matcher.service';
 import { Bill, Transaction } from '../types';
@@ -13,7 +13,7 @@ import { Bill, Transaction } from '../types';
 export class AssignBillsComponent implements OnInit {
 
   public transaction: Transaction;
-  public comparer = compareId;
+  public comparer: ((a: Bill, b: Bill) => number) = compareId;
   public reversed = true;
   public billsDisplayed: Bill[];
   public activeFilter = '';
@@ -21,6 +21,7 @@ export class AssignBillsComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     public matcher: MatcherService,
   ) { }
 
@@ -30,6 +31,7 @@ export class AssignBillsComponent implements OnInit {
 
   getTransaction(): void {
     const id = +this.route.snapshot.paramMap.get('id');
+    console.log(id);
     this.transaction = this.matcher.matches.remainingTransactions[id];
     this.billsDisplayed = this.matcher.matches.remainingBills;
   }
@@ -83,10 +85,22 @@ export class AssignBillsComponent implements OnInit {
 
   assignBills(): void {
     this.matcher.addMatch(this.transaction, this.selectedBills.map(i => this.billsDisplayed[i]));
+    this.getNextTransaction();
   }
 
   removeTransaction(comment: string) {
     this.matcher.markNotMatching(this.transaction, comment);
+    this.getNextTransaction();
+  }
+
+  private getNextTransaction() {
+    if(this.matcher.matches.remainingTransactions.length === 0) {
+      this.router.navigate(['/dashboard']);
+      return;
+    }
+    this.transaction = this.matcher.matches.remainingTransactions[0];
+    this.billsDisplayed = this.matcher.matches.remainingBills;
+    this.selectedBills = [];
   }
 
 }

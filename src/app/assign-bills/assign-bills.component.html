@@ -24,10 +24,10 @@
     <label for="commentBox">Kommentar: </label>
     <input #commentBox id="commentBox" placeholder="Keine passende Rechnung"/>
     <button class="noMatch"
-        (click)="commentBox.value !== '' ? removeTransaction(commentBox.value) : removeTransaction(commentBox.placeholder)"
-        routerLink="/openTransactions">
+        (click)="commentBox.value !== '' ? removeTransaction(commentBox.value) : removeTransaction(commentBox.placeholder)">
         Keine passende Rechnung
     </button>
+    <div class="remaining">Verbleibende Zahlungen: {{matcher.matches.remainingTransactions.length}}</div>
 </div>
 <h2>Offene Rechnungen</h2>
 <h3>Mögliche Filter</h3>
@@ -38,7 +38,7 @@
 </div>
 <div>Aktiver Filter: {{activeFilter}}</div>
 <button class="clear" (click)="clearFilter()">Filter Zurücksetzen</button>
-<button class="assign" routerLink="/openTransactions" [disabled]="selectedBills.length === 0" (click)="assignBills()">Rechnungen Zuweisen</button>
+<button class="assign" [disabled]="selectedBills.length === 0" (click)="assignBills()">Rechnungen Zuweisen</button>
 <div class="Bills">
     <div class="header">
         <div class="headerField" (click)="changeComparer('rnr')">Rechnungsnummer</div>
@@ -46,7 +46,7 @@
         <div class="headerField" (click)="changeComparer('name')">Name</div>
         <div class="headerField">Datum</div>
     </div>
-    <div *ngFor="let bill of billsDisplayed.sort(this.comparer), index as i">
+    <div *ngFor="let bill of billsDisplayed.sort(comparer), index as i">
         <div class="entry" [class.selected]="isSelected(i)" (click)="selectBill(i)">
             <div class="parameter">
                 {{bill.id}}
