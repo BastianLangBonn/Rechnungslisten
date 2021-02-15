@@ -104,7 +104,7 @@ export class MatcherService {
     };
     const numbersInUsage = transaction.usage.match(/\d+/g);
     if( numbersInUsage ){
-      const matchingBills = bills.filter(bill => numbersInUsage.includes(bill.id))
+      const matchingBills = bills.filter(bill => numbersInUsage.includes(bill.id)).map(bill => { return {...bill, transactionDate: transaction.transactionDate}})
       result.bills = matchingBills;
     }
     return result;

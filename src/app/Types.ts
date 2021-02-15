@@ -17,6 +17,7 @@ export interface Bill extends MoneyConstruct{
     taxReduced?: number;
     firstName?: string;
     lastName?: string;
+    transactionDate?: string;
   }
 
   export interface Client {
