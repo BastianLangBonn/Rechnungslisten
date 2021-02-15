@@ -1,6 +1,6 @@
 <div routerLink="/dashboard"><---</div>
 <h1>Zugewiesene Zahlungen</h1>
 <div class="assignment" *ngFor="let match of matches">
-    <div class="transaction">{{match.transaction.amount}} | {{match.transaction.usage}}</div>
+    <div class="transaction">{{match.transaction.amount}} | {{match.transaction.usage}} | {{match.transaction.transactionDate}}</div>
     <app-bills class="bills" [bills]="match.bills"></app-bills>
 </div>
