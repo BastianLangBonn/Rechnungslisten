@@ -114,7 +114,8 @@ export class MatcherService {
     const matchesByName: TransactionMatch[] = state.remainingTransactions.map(transaction => {
       return {
         transaction,
-        bills: state.remainingBills.filter(bill => transaction.payer.toUpperCase().includes(bill.lastName.toUpperCase()) && transaction.amount === bill.amount),
+        bills: state.remainingBills.filter(bill => transaction.payer.toUpperCase().includes(bill.lastName.toUpperCase()) && transaction.amount === bill.amount)
+          .map(bill => {return {...bill, transactionDate: transaction.transactionDate}}),
       }
     }).filter(match => match.bills.length > 0);
     return {
