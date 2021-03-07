@@ -40,6 +40,7 @@ export class MatcherService {
    }
 
   private pipe = (...fns: any[]) => (x: any) => fns.reduce((v, f) => f(v), x);
+  private tap = (fn: any) => (x: any) => {fn(x); return x;};
 
   private match(bills: Bill[], transactions: Transaction[]): MatchResult {
     const initialState: MatchResult = EMPTY_STATE;
@@ -49,10 +50,15 @@ export class MatcherService {
     initialState.initialTransactions = transactions;
 
     const finalState: MatchResult = this.pipe(
+      this.tap(console.log),
       this.filterNegativeTransactions,
+      this.tap(console.log),
       this.filterListedPayers,
+      this.tap(console.log),
       this.findIdMatchesForTransactions.bind(this),
-      this.findNameMatchesForTransactions
+      this.tap(console.log),
+      this.findNameMatchesForTransactions,
+      this.tap(console.log)
     )(initialState);
 
     console.log(finalState);
@@ -88,7 +94,7 @@ export class MatcherService {
 
     return {
       ...state,
-      remainingBills: state.remainingBills.filter(bill => !assignedBills.includes(bill)),
+      remainingBills: state.remainingBills.filter(bill => !assignedBills.some(b => b.id === bill.id)),
       remainingTransactions: state.remainingTransactions.filter(transaction => !assignedTransactions.includes(transaction)),
       filteredTransactions: state.filteredTransactions,
       validMatches,
@@ -119,7 +125,7 @@ export class MatcherService {
     }).filter(match => match.bills.length > 0);
     return {
       ...state,
-      remainingBills: state.remainingBills.filter(bill => !matchesByName.reduce((acc, cur) => acc.concat(cur.bills), []).includes(bill)),
+      remainingBills: state.remainingBills.filter(bill => !matchesByName.reduce((acc, cur) => acc.concat(cur.bills), []).some(b => b.id === bill.id)),
       remainingTransactions: state.remainingTransactions.filter(transaction => !matchesByName.map(match => match.transaction).includes(transaction)),
       filteredTransactions: state.filteredTransactions,
       validMatches: state.validMatches.concat(matchesByName),
