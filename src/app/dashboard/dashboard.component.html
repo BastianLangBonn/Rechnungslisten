@@ -6,5 +6,5 @@
 <div routerLink="/notMatchedTransactions">Nicht zugewiesene Zahlungen: {{matcher.matches.notMatchingTransactions.length}}</div>
 <div routerLink="/invalidMatches">Ungültige Zuweisungen: {{matcher.matches.invalidMatches.length}}</div>
 <div routerLink="/openBills">Übrige Rechnungen: {{matcher.matches.remainingBills.length}}</div>
-<div routerLink="/openTransactions">Übrige Zahlungen: {{matcher.matches.remainingTransactions.length}}</div>
+<div routerLink="/openTransactions">Manuell zu prüfende Zahlungen: {{matcher.matches.remainingTransactions.length}}</div>
 <button class="save" (click)="storeTables()">Save</button>

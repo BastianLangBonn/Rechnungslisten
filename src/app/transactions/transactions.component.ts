@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { changeComparer, compareId } from '../helper';
-import { Transaction } from '../types';
+import { Bill, Transaction } from '../types';
 
 @Component({
   selector: 'app-transactions',
@@ -12,7 +12,7 @@ export class TransactionsComponent implements OnInit {
   @Input()
   transactions: Transaction[];
 
-  comparer = compareId;
+  comparer: any = compareId;
   reverse = true;
 
   constructor() { }
