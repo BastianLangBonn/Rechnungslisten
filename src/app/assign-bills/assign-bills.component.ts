@@ -1,7 +1,8 @@
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { ThrowStmt } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { changeComparer, compareAmount, compareAmountRev, compareId, compareIdRev, compareName, compareNameRev } from '../helper';
+import { changeComparer, compareId} from '../helper';
 import { MatcherService } from '../matcher.service';
 import { Bill, Transaction } from '../types';
 
