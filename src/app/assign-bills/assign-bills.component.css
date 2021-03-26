@@ -30,3 +30,7 @@
 .selected {
     background-color: #0000aa99;
 }
+
+.entry {
+    cursor: pointer;
+}

@@ -5,14 +5,14 @@
   <DataSupplier>
     <Name>Judith Nierlich</Name>
     <Location>53844 Troisdorf</Location>
-    <Comment>Datentraegerueberlassung nach GoBD vom 08.01.2021</Comment>
+    <Comment>Datentraegerueberlassung nach GoBD vom 01.03.2021</Comment>
   </DataSupplier>
   <Media>
     <Name>Medium 1</Name>
     <Table>
       <URL>rechnungen.txt</URL>
       <Name>Rechnungen</Name>
-      <Description>Rechnungen: sortiert nach Name und Rechnungsnummer</Description>
+      <Description>Rechnungen: sortiert nach Datum und Rechnungsnummer</Description>
       <VariableLength>
         <VariableColumn>
           <Name>datum</Name>
