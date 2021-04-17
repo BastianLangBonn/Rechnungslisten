@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { forkJoin, from, Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import * as xml2js from 'xml2js';
+import { INDEX_XML_FILEPATH } from './app-constants';
 import { CommonUtilsService } from './common-utils.service';
 import { Bill, Client, FileHeader, Payment } from './types';
 
@@ -13,11 +14,11 @@ export class BillCollectorService {
   public bills$: Observable<any>;
 
   constructor(private http: HttpClient, private dataCollector: CommonUtilsService) {
-    this.bills$ = this.loadBills();
+    this.bills$ = this.loadBills(INDEX_XML_FILEPATH);
    }
 
-  private loadBills() {
-    return this.http.get('assets/index.xml', {responseType: 'text'})
+  private loadBills(filepath: string) {
+    return this.http.get(filepath, {responseType: 'text'})
       .pipe(
         switchMap(data => {
           return from(xml2js.parseStringPromise(data)).pipe(
