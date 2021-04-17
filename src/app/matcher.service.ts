@@ -1,21 +1,12 @@
 import { Injectable } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { BillCollectorService } from './bill-collector.service';
+import { FilterService } from './filter.service';
 import { TransactionCollectorService } from './transaction-collector.service';
-import { Bill, MatchResult, Transaction, TransactionMatch } from './types';
+import { Bill, MatchState, Transaction, TransactionMatch } from './types';
 
-const FILTERED_PAYERS = [
-  'Kassenzahnarztliche Vereinigung Nordrhein',
-  'Techniker Krankenkasse',
-  'DAMPSOFT GmbH',
-  'IKK classic',
-  'AOK Rheinland/Hamburg',
-  'Unfallkasse NRW',
-  'BARMER',
-  'BSCARD',
-];
 
-const EMPTY_STATE: MatchResult = {
+const EMPTY_STATE: MatchState = {
   initialTransactions: [],
   initialBills: [],
   remainingBills: [],
@@ -31,9 +22,13 @@ const EMPTY_STATE: MatchResult = {
 })
 export class MatcherService {
 
-  public matches: MatchResult = EMPTY_STATE;
+  public matches: MatchState = EMPTY_STATE;
 
-  constructor(private transactionCollector: TransactionCollectorService, private billCollector: BillCollectorService) {
+  constructor(
+        private transactionCollector: TransactionCollectorService,
+        private billCollector: BillCollectorService,
+        private filter: FilterService
+    ) {
     forkJoin([this.transactionCollector.transactions$,this.billCollector.bills$]).subscribe(([transactions, bills]) => {
       this.matches = this.match(bills, transactions);
     });
@@ -42,46 +37,31 @@ export class MatcherService {
   private pipe = (...fns: any[]) => (x: any) => fns.reduce((v, f) => f(v), x);
   private tap = (fn: any) => (x: any) => {fn(x); return x;};
 
-  private match(bills: Bill[], transactions: Transaction[]): MatchResult {
-    const initialState: MatchResult = EMPTY_STATE;
+  private match(bills: Bill[], transactions: Transaction[]): MatchState {
+    const initialState: MatchState = EMPTY_STATE;
     initialState.remainingBills = bills;
     initialState.remainingTransactions = transactions;
     initialState.initialBills = bills;
     initialState.initialTransactions = transactions;
 
-    const finalState: MatchResult = this.pipe(
-      this.tap(console.log),
-      this.filterNegativeTransactions,
-      this.tap(console.log),
-      this.filterListedPayers,
-      this.tap(console.log),
+    const finalState: MatchState = this.pipe(
+      // this.tap(console.log),
+      this.filter.filterNegativeTransactions,
+      // this.tap(console.log),
+      this.filter.filterListedPayers,
+      // this.tap(console.log),
       this.findIdMatchesForTransactions.bind(this),
-      this.tap(console.log),
+      // this.tap(console.log),
       this.findNameMatchesForTransactions,
-      this.tap(console.log)
+      // this.tap(console.log)
     )(initialState);
 
     console.log(finalState);
     return finalState;
   }
 
-  private filterNegativeTransactions(state: MatchResult): MatchResult {
-    return {
-      ...state,
-      remainingTransactions: state.remainingTransactions.filter(transaction => transaction.amount > 0),
-      filteredTransactions: state.remainingTransactions.filter(transaction => transaction.amount < 0),
-    }
-  }
 
-  private filterListedPayers(state: MatchResult): MatchResult {
-    return {
-      ...state,
-      remainingTransactions: state.remainingTransactions.filter(transaction => !FILTERED_PAYERS.includes(transaction.payer)),
-      filteredTransactions: state.filteredTransactions.concat(state.remainingTransactions.filter(transaction => FILTERED_PAYERS.includes(transaction.payer))),
-    }
-  }
-
-  private findIdMatchesForTransactions(state: MatchResult): MatchResult {
+  private findIdMatchesForTransactions(state: MatchState): MatchState {
     const matchesById = state.remainingTransactions
     .map(transaction => this.findIdMatchesForTransaction(transaction, state.remainingBills))
     .filter(match => match.bills.length > 0);
@@ -115,7 +95,7 @@ export class MatcherService {
     return result;
   }
 
-  private findNameMatchesForTransactions(state: MatchResult): MatchResult {
+  private findNameMatchesForTransactions(state: MatchState): MatchState {
     const matchesByName: TransactionMatch[] = state.remainingTransactions.map(transaction => {
       return {
         transaction,

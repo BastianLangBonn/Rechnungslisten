@@ -68,7 +68,7 @@ export interface Bill extends MoneyConstruct{
     bills: Bill[];
   }
 
-  export interface MatchResult {
+  export interface MatchState {
     remainingBills: Bill[];
     remainingTransactions: Transaction[];
     notMatchingTransactions: Transaction[];

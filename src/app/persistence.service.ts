@@ -2,7 +2,7 @@ import { ThrowStmt } from '@angular/compiler';
 import { Injectable } from '@angular/core';
 import * as FileSaver from 'file-saver';
 import { compareId, comparePayer } from './helper';
-import { Bill, MatchResult, Transaction, TransactionMatch } from './types';
+import { Bill, MatchState, Transaction, TransactionMatch } from './types';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +11,7 @@ export class PersistenceService {
 
   constructor() {}
 
-  public storeMatches(match: MatchResult) {
+  public storeMatches(match: MatchState) {
     this.storeBills(match.remainingBills.sort(compareId), 'openBills.csv');
     this.storeTransactions(match.notMatchingTransactions.sort(comparePayer), 'openTransactions.csv')
     this.storeMatchedTransactions(match.validMatches, 'closedBills.csv');
