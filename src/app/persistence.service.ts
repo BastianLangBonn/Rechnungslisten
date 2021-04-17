@@ -13,7 +13,7 @@ export class PersistenceService {
 
   public storeMatches(match: MatchState) {
     this.storeBills(match.remainingBills.sort(compareId), 'openBills.csv');
-    this.storeTransactions(match.notMatchingTransactions.sort(comparePayer), 'openTransactions.csv')
+    this.storeTransactions(match.unassignableTransactions.sort(comparePayer), 'openTransactions.csv')
     this.storeMatchedTransactions(match.validMatches, 'closedBills.csv');
   }
 

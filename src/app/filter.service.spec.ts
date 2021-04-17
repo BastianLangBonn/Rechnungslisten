@@ -21,22 +21,56 @@ describe('FilterService', () => {
       expect(() => service.filterNegativeTransactions(state)).toThrowError();
     });
 
-    it('should do sth else', () => {
-      // const transactions: [Transaction] = [
-      //   {
-      //     amount:
-      //   }
-      // ];
-      const state: MatchState = {
-        filteredTransactions: [],
-        initialBills: [],
-        initialTransactions: [],
-        invalidMatches: [],
-        notMatchingTransactions: [],
-        remainingBills: [],
-        remainingTransactions: [],
-        validMatches: []
-      };
+    it('should do nothing if amount is positive', () => {
+      const transaction: Transaction = generateTransaction(100);
+      const state: MatchState = generateInitialState([transaction]);
+      const result: MatchState = service.filterNegativeTransactions(state);
+      expect(result.remainingTransactions).toContain(transaction);
+      expect(result.filteredTransactions).toEqual([]);
+    });
+
+    it('should filter transaction if amount is negative', () => {
+      const transaction: Transaction = generateTransaction(-10);
+      const state: MatchState = generateInitialState([transaction])
+      const result: MatchState = service.filterNegativeTransactions(state);
+      expect(result.remainingTransactions).toEqual([]);
+      expect(result.filteredTransactions).toContain(transaction);
     });
   });
 });
+
+const generateTransaction = (amount: number): Transaction => {
+  return {
+    amount,
+    bic: 'bic',
+    bookingText: 'bookingText',
+    clientReference: 'clientReference',
+    collectiveReference: 'collectiveReference',
+    creditorId: 'creditor',
+    currency: 'currency',
+    directDebit: 0,
+    iban: 'iban',
+    info: 'info',
+    mandateReference: 'mandateReference',
+    orderAccount: 'orderAccount',
+    payer: 'payer',
+    returnDebit: 0,
+    transactionDate: 'transactionDate',
+    usage: 'usage',
+    valutaData: 'valutaDate',
+    comment: 'comment'
+  };
+}
+
+const generateInitialState = (remainingTransactions: [Transaction]): MatchState => {
+  return {
+    filteredTransactions: [],
+    initialBills: [],
+    initialTransactions: [],
+    invalidMatches: [],
+    remainingBills: [],
+    remainingTransactions,
+    validMatches: [],
+    unassignableTransactions: [],
+  };
+}

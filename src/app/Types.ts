@@ -44,22 +44,22 @@ export interface Bill extends MoneyConstruct{
   }
 
   export interface Transaction extends MoneyConstruct{
-    orderAccount: string;
-    transactionDate: string;
-    valutaData: string;
+    bic: string;
     bookingText: string;
-    usage: string;
-    creditorId: string;
-    mandateReference: string;
     clientReference: string;
     collectiveReference: string;
-    directDebit: number;
-    returnDebit: number;
-    payer: string;
-    iban: string;
-    bic: string;
+    creditorId: string;
     currency: string;
+    directDebit: number;
+    iban: string;
     info: string;
+    mandateReference: string;
+    orderAccount: string;
+    payer: string;
+    returnDebit: number;
+    transactionDate: string;
+    usage: string;
+    valutaData: string;
     comment?: string;
   }
 
@@ -69,14 +69,22 @@ export interface Bill extends MoneyConstruct{
   }
 
   export interface MatchState {
-    remainingBills: Bill[];
-    remainingTransactions: Transaction[];
-    notMatchingTransactions: Transaction[];
-    filteredTransactions: Transaction[];
-    validMatches: TransactionMatch[];
-    invalidMatches: TransactionMatch[];
-    initialTransactions: Transaction[];
+    /** All bills as read from the source */
     initialBills: Bill[];
+    /** All transactions as read from the source */
+    initialTransactions: Transaction[];
+    /** All transactions that have been filtered */
+    filteredTransactions: Transaction[];
+    /** All transactions that have been manually marked unsassignable */
+    unassignableTransactions: Transaction[];
+    /** All valid matches found */
+    validMatches: TransactionMatch[];
+    /** Matches that have proven invalid due to wrong amount for example*/
+    invalidMatches: TransactionMatch[];
+    /** All bills that have not been matched yet */
+    remainingBills: Bill[];
+    /** All transactions that have not been matched or discarded yet */
+    remainingTransactions: Transaction[];
   }
 
   export interface MoneyConstruct {

@@ -11,7 +11,7 @@ const EMPTY_STATE: MatchState = {
   initialBills: [],
   remainingBills: [],
   remainingTransactions: [],
-  notMatchingTransactions: [],
+  unassignableTransactions: [],
   filteredTransactions: [],
   validMatches: [],
   invalidMatches: [],
@@ -155,7 +155,7 @@ export class MatcherService {
     transaction.comment = comment;
     this.matches = {
       ...this.matches,
-      notMatchingTransactions: this.matches.notMatchingTransactions.concat(transaction),
+      unassignableTransactions: this.matches.unassignableTransactions.concat(transaction),
       remainingTransactions: this.matches.remainingTransactions.filter(t => t.usage !== transaction.usage),
     }
   }
