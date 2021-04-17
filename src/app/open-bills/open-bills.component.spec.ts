@@ -1,3 +1,4 @@
+import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { OpenBillsComponent } from './open-bills.component';
@@ -8,7 +9,8 @@ describe('OpenBillsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ OpenBillsComponent ]
+      declarations: [ OpenBillsComponent ],
+      imports: [HttpClientModule]
     })
     .compileComponents();
   });

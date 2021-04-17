@@ -1,3 +1,4 @@
+import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { OpenTransactionsComponent } from './open-transactions.component';
@@ -8,7 +9,8 @@ describe('OpenTransactionsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ OpenTransactionsComponent ]
+      declarations: [ OpenTransactionsComponent ],
+      imports: [HttpClientModule]
     })
     .compileComponents();
   });

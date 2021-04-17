@@ -1,3 +1,4 @@
+import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { InitialBillsComponent } from './initial-bills.component';
@@ -8,7 +9,8 @@ describe('InitialBillsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ InitialBillsComponent ]
+      declarations: [ InitialBillsComponent ],
+      imports: [HttpClientModule]
     })
     .compileComponents();
   });

@@ -1,3 +1,4 @@
+import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { InitialTransactionsComponent } from './initial-transactions.component';
@@ -8,7 +9,8 @@ describe('InitialTransactionsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ InitialTransactionsComponent ]
+      declarations: [ InitialTransactionsComponent ],
+      imports: [HttpClientModule]
     })
     .compileComponents();
   });

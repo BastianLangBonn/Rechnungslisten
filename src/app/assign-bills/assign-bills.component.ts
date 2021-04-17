@@ -33,7 +33,7 @@ export class AssignBillsComponent implements OnInit {
 
   getTransaction(): void {
     const id = +this.route.snapshot.paramMap.get('id');
-    console.log(id);
+    // console.log(id);
     this.transaction = this.matcher.matches.remainingTransactions[id];
   }
 
