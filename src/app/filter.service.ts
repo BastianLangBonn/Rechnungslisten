@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { exception } from 'console';
 import { MatchState } from './types';
 
 const FILTERED_PAYERS = [
@@ -32,6 +31,9 @@ export class FilterService {
   }
 
   public filterListedPayers(state: MatchState): MatchState {
+    if(!state) {
+      throw new Error('State is not set');
+    }
     return {
       ...state,
       remainingTransactions: state.remainingTransactions.filter(transaction => !FILTERED_PAYERS.includes(transaction.payer)),
