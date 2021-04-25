@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatcherService } from '../matcher.service';
-import { TransactionMatch } from '../types';
+import { Match } from '../types';
 
 @Component({
   selector: 'app-assigned-transactions',
@@ -9,12 +9,12 @@ import { TransactionMatch } from '../types';
 })
 export class AssignedTransactionsComponent implements OnInit {
 
-  matches: TransactionMatch[];
+  matches: Match[];
 
   constructor(public matcher: MatcherService) { }
 
   ngOnInit(): void {
-    this.matches = this.matcher.matches.validMatches;
+    this.matches = this.matcher.matches.matches;
   }
 
 }

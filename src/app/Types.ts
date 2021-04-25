@@ -17,7 +17,6 @@ export interface Bill extends MoneyConstruct{
     taxReduced?: number;
     firstName?: string;
     lastName?: string;
-    transactionDate?: string;
   }
 
   export interface Client {
@@ -63,9 +62,9 @@ export interface Bill extends MoneyConstruct{
     comment?: string;
   }
 
-  export interface TransactionMatch {
+  export interface Match {
     transaction: Transaction;
-    bills: Bill[];
+    bill: Bill;
   }
 
   export interface MatchState {
@@ -78,9 +77,7 @@ export interface Bill extends MoneyConstruct{
     /** All transactions that have been manually marked unsassignable */
     unassignableTransactions: Transaction[];
     /** All valid matches found */
-    validMatches: TransactionMatch[];
-    /** Matches that have proven invalid due to wrong amount for example*/
-    invalidMatches: TransactionMatch[];
+    matches: Match[];
     /** All bills that have not been matched yet */
     remainingBills: Bill[];
     /** All transactions that have not been matched or discarded yet */

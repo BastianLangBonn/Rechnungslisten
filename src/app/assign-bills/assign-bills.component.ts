@@ -1,5 +1,3 @@
-import { animate, state, style, transition, trigger } from '@angular/animations';
-import { ThrowStmt } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { changeComparer, compareId} from '../helper';
@@ -55,7 +53,7 @@ export class AssignBillsComponent implements OnInit {
   }
 
   assignBills(): void {
-    this.matcher.addMatch(this.transaction, this.selectedBills);
+    this.matcher.addMatches(this.transaction, this.selectedBills);
     this.getNextTransaction();
   }
 

@@ -3,7 +3,8 @@ import { forkJoin } from 'rxjs';
 import { BillCollectorService } from './bill-collector.service';
 import { FilterService } from './filter.service';
 import { TransactionCollectorService } from './transaction-collector.service';
-import { Bill, MatchState, Transaction, TransactionMatch } from './types';
+import { TransactionMatcherService } from './transaction-matcher.service';
+import { Bill, MatchState, Transaction, Match } from './types';
 
 
 const EMPTY_STATE: MatchState = {
@@ -13,8 +14,7 @@ const EMPTY_STATE: MatchState = {
   remainingTransactions: [],
   unassignableTransactions: [],
   filteredTransactions: [],
-  validMatches: [],
-  invalidMatches: [],
+  matches: [],
 };
 
 @Injectable({
@@ -27,7 +27,8 @@ export class MatcherService {
   constructor(
         private transactionCollector: TransactionCollectorService,
         private billCollector: BillCollectorService,
-        private filter: FilterService
+        private filter: FilterService,
+        private transactionMatcher: TransactionMatcherService
     ) {
     forkJoin([this.transactionCollector.transactions$,this.billCollector.bills$]).subscribe(([transactions, bills]) => {
       this.matches = this.match(bills, transactions);
@@ -50,7 +51,7 @@ export class MatcherService {
       // this.tap(console.log),
       this.filter.filterListedPayers,
       // this.tap(console.log),
-      this.findIdMatchesForTransactions.bind(this),
+      this.transactionMatcher.findIdMatches,
       // this.tap(console.log),
       this.findNameMatchesForTransactions,
       // this.tap(console.log)
@@ -60,56 +61,19 @@ export class MatcherService {
     return finalState;
   }
 
-
-  private findIdMatchesForTransactions(state: MatchState): MatchState {
-    const matchesById = state.remainingTransactions
-    .map(transaction => this.findIdMatchesForTransaction(transaction, state.remainingBills))
-    .filter(match => match.bills.length > 0);
-
-    const isValidMatch = (match: TransactionMatch) => Math.abs(match.bills.reduce((acc: number, curr: Bill) => acc - curr.amount, match.transaction.amount)) < 0.01;
-    const validMatches = state.validMatches.concat(...matchesById.filter(isValidMatch));
-    const invalidMatches = state.invalidMatches.concat(...matchesById.filter(match => !isValidMatch(match)))
-    const assignedTransactions = validMatches.map(match => match.transaction);
-    const assignedBills = validMatches.reduce((acc, curr) => acc.concat(curr.bills), []);
-
-    return {
-      ...state,
-      remainingBills: state.remainingBills.filter(bill => !assignedBills.some(b => b.id === bill.id)),
-      remainingTransactions: state.remainingTransactions.filter(transaction => !assignedTransactions.includes(transaction)),
-      filteredTransactions: state.filteredTransactions,
-      validMatches,
-      invalidMatches,
-    }
-  }
-
-  private findIdMatchesForTransaction(transaction: Transaction, bills: Bill[]): TransactionMatch {
-    const result: TransactionMatch = {
-      transaction,
-      bills: []
-    };
-    const numbersInUsage = transaction.usage.match(/\d+/g);
-    if( numbersInUsage ){
-      const matchingBills = bills.filter(bill => numbersInUsage.includes(bill.id)).map(bill => { return {...bill, transactionDate: transaction.transactionDate}})
-      result.bills = matchingBills;
-    }
-    return result;
-  }
-
   private findNameMatchesForTransactions(state: MatchState): MatchState {
-    const matchesByName: TransactionMatch[] = state.remainingTransactions.map(transaction => {
-      return {
-        transaction,
-        bills: state.remainingBills.filter(bill => transaction.payer.toUpperCase().includes(bill.lastName.toUpperCase()) && transaction.amount === bill.amount)
-          .map(bill => {return {...bill, transactionDate: transaction.transactionDate}}),
-      }
-    }).filter(match => match.bills.length > 0);
+    const matchesByName: Match[] = [];
+    state.remainingTransactions.forEach(transaction => {
+      const bills: Bill[] = state.remainingBills.filter(bill => transaction.payer.toUpperCase().includes(bill.lastName.toUpperCase()) && transaction.amount === bill.amount);
+      matchesByName.concat(bills.map((bill: Bill) => { return {bill, transaction}}));
+    });
+
     return {
       ...state,
-      remainingBills: state.remainingBills.filter(bill => !matchesByName.reduce((acc, cur) => acc.concat(cur.bills), []).some(b => b.id === bill.id)),
+      remainingBills: state.remainingBills.filter(bill => !matchesByName.reduce((acc, cur) => acc.concat(cur.bill), []).some(b => b.id === bill.id)),
       remainingTransactions: state.remainingTransactions.filter(transaction => !matchesByName.map(match => match.transaction).includes(transaction)),
       filteredTransactions: state.filteredTransactions,
-      validMatches: state.validMatches.concat(matchesByName),
-      invalidMatches: state.invalidMatches,
+      matches: state.matches.concat(matchesByName)
     }
   }
 
@@ -119,13 +83,11 @@ export class MatcherService {
    * @param bills List of bills to be searched
    * @param transactions List of transactions to be matched
    */
-  public findAmountMatchesForTransactions(bills: Bill[], transactions: Transaction[]): TransactionMatch[] {
+  public findAmountMatchesForTransactions(bills: Bill[], transactions: Transaction[]): Match[] {
     return transactions.map(transaction => {
-      return {
-        transaction,
-        bills: bills.filter(bill => bill.amount === transaction.amount),
-      };
-    }).filter(match => match.bills.length > 0);
+      const bill: Bill | undefined = bills.find(bill => bill.amount === transaction.amount);
+      return bill ? {transaction, bill} : null;
+    }).filter((match: Match | null) => match);
   }
 
   /**
@@ -133,19 +95,20 @@ export class MatcherService {
    * @param bills List of bills to be searched
    * @param transactions List of transactions to be matched
    */
-  public findNameMatchesOnlyForTransactions(bills: Bill[], transactions: Transaction[]): TransactionMatch[] {
-    return transactions.map(transaction => {
-      return {
-        transaction,
-        bills: bills.filter(bill => transaction.amount !== bill.amount && transaction.payer.toUpperCase().includes(bill.lastName.toUpperCase())),
-      }
-    }).filter(match => match.bills.length > 0);
+  public findNameMatchesOnlyForTransactions(bills: Bill[], transactions: Transaction[]): Match[] {
+    const result: Match[] = [];
+    transactions.forEach(transaction => {
+      const matchingBills: Bill[] = bills.filter(bill => transaction.amount !== bill.amount && transaction.payer.toUpperCase().includes(bill.lastName.toUpperCase()));
+      result.concat(matchingBills.map((bill: Bill) => { return {bill, transaction}}));
+    });
+    return result;
   }
 
-  public addMatch(transaction: Transaction, bills: Bill[]): void {
+  public addMatches(transaction: Transaction, bills: Bill[]): void {
+    const matches = bills.map((bill: Bill) => { return {bill, transaction}});
     this.matches = {
       ...this.matches,
-      validMatches: this.matches.validMatches.concat({transaction, bills}),
+      matches: this.matches.matches.concat(matches),
       remainingTransactions: this.matches.remainingTransactions.filter(remainer => remainer.usage !== transaction.usage),
       remainingBills: this.matches.remainingBills.filter(bill => bills.every(b => b.id !== bill.id)),
     }

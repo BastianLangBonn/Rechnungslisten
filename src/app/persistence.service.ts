@@ -2,7 +2,7 @@ import { ThrowStmt } from '@angular/compiler';
 import { Injectable } from '@angular/core';
 import * as FileSaver from 'file-saver';
 import { compareId, comparePayer } from './helper';
-import { Bill, MatchState, Transaction, TransactionMatch } from './types';
+import { Bill, MatchState, Transaction, Match } from './types';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +14,7 @@ export class PersistenceService {
   public storeMatches(match: MatchState) {
     this.storeBills(match.remainingBills.sort(compareId), 'openBills.csv');
     this.storeTransactions(match.unassignableTransactions.sort(comparePayer), 'openTransactions.csv')
-    this.storeMatchedTransactions(match.validMatches, 'closedBills.csv');
+    this.storeMatchedTransactions(match.matches, 'closedBills.csv');
   }
 
   private storeBills(bills: Bill[], filename: string) {
@@ -29,9 +29,16 @@ export class PersistenceService {
     this.saveContent([header, ...content], filename);
   }
 
-  private storeMatchedTransactions(matches: TransactionMatch[], filename: string) {
+  private storeMatchedTransactions(matches: Match[], filename: string) {
+    const matchedBills: Map<Bill, Transaction[]> = new Map();
+    matches.map((match: Match) => match.bill).forEach((bill: Bill) => {
+      if (!matchedBills.has(bill)) {
+        const transactions = matches.filter((match: Match) => match.bill === bill).map((match: Match) => match.transaction);
+        matchedBills.set(bill, transactions);
+      }
+    });
     const header = 'Rechnungsnummer;Name;Vorname;Betrag;Datum\n';
-    const content: string[] = matches.reduce((acc, curr) => acc.concat(...curr.bills.map(bill => `${bill.id};${bill.lastName};${bill.firstName};${bill.amount};${curr.transaction.transactionDate}\n`)), []);
+    const content: string[] = [...matchedBills.keys()].map((bill: Bill) => `${bill.id};${bill.lastName};${bill.firstName};${bill.amount};${matchedBills.get(bill).map((transaction: Transaction) => transaction.transactionDate).join(', ')}`);
     this.saveContent([header, ...content], filename);
   }
 

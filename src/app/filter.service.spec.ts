@@ -136,10 +136,9 @@ const generateInitialState = (remainingTransactions: Transaction[]): MatchState 
     filteredTransactions: [],
     initialBills: [],
     initialTransactions: [],
-    invalidMatches: [],
     remainingBills: [],
     remainingTransactions,
-    validMatches: [],
+    matches: [],
     unassignableTransactions: [],
   };
 }
