@@ -1,8 +1,11 @@
-.bills {
-    margin-left: 10px;
+tbody > tr:nth-child(even) {
+    background-color: white;
 }
 
-.assignment {
-    border-bottom: 1px solid black;
-    margin-bottom: 10px;
+tbody > tr:nth-child(odd) {
+    background-color: lightslategray;
+}
+td {
+    border: 1px solid black;
+    width: 100%;
 }

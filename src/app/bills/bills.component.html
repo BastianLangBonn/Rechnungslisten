@@ -1,15 +1,20 @@
 <div class="bills">
-    <div class="row">
-        <div class="field" (click)="changeComparer('rnr')">Rechnungsnummer</div>
-        <div class="field" (click)="changeComparer('amount')">Betrag</div>
-        <div class="field" (click)="changeComparer('name')">Name</div>
-        <div class="field">Rechnungsdatum</div>
-        <div class="field">Zahlungsdatum</div>
-    </div>
-    <div class="row" *ngFor="let bill of bills.sort(comparer)">
-        <div class="field">{{bill.id}}</div>
-        <div class="field">{{bill.amount}}</div>
-        <div class="field">{{bill.lastName}}, {{bill.firstName}}</div>
-        <div class="field">{{bill.date}}</div>
-    </div>
+    <table>
+        <thead>
+            <tr>
+                <th (click)="changeComparer('rnr')">Rechnungsnummer</th>
+                <th (click)="changeComparer('amount')">Betrag</th>
+                <th (click)="changeComparer('name')">Name</th>
+                <th>Rechnungsdatum</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let bill of bills.sort(comparer)">
+                <td>{{bill.id}}</td>
+                <td>{{bill.amount}}</td>
+                <td>{{bill.lastName}}, {{bill.firstName}}</td>
+                <td>{{bill.date}}</td>
+            </tr>
+        </tbody>
+    </table>
 </div>

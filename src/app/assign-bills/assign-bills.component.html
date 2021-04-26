@@ -29,6 +29,7 @@
     <span class="headerField" (click)="changeComparer('name')">Name</span>
     <span class="headerField">Datum</span>
 </div>
+
 <h3>Passender Betrag</h3>
 <div class="Amount">
     <div *ngFor="let bill of matcher.matches.remainingBills.filter(filterForAmount).sort(comparer)">
@@ -48,6 +49,7 @@
         </div>
     </div>
 </div>
+
 <h3>Passender Kontoinhaber</h3>
 <div class="Payer">
     <div *ngFor="let bill of matcher.matches.remainingBills.filter(filterForPayer).sort(comparer)">
@@ -67,6 +69,7 @@
         </div>
     </div>
 </div>
+
 <h3>Rechnungsnummer in Verwendungszweck</h3>
 <div class="BillId">
     <div *ngFor="let bill of matcher.matches.remainingBills.filter(filterForBillId).sort(comparer)">

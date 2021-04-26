@@ -1,13 +1,12 @@
-.row {
-    display: flex;
-    flex-direction: row;
+table {
+    border: 1px solid black;
+    background-color: lightsteelblue;
 }
 
-.field {
-    padding: 5px;
-    border-left: 1px solid black;
+tbody > tr:nth-child(even) {
+    background-color: lightsteelblue;
 }
 
-.field:first-of-type {
-    border-left: none;
+tbody > tr:nth-child(odd) {
+    background-color: lightslategray;
 }

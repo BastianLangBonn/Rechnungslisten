@@ -1,6 +1,20 @@
 <div routerLink="/dashboard"><---</div>
 <h1>Zugewiesene Zahlungen</h1>
-<div class="assignment" *ngFor="let match of matches">
-    <div class="transaction">{{match.transaction.amount}} | {{match.transaction.usage}} | {{match.transaction.transactionDate}}</div>
-    <app-bills class="bills" [bills]="[match.bill]"></app-bills>
-</div>
+<table>
+    <thead>
+        <tr>
+            <th>Verwendungszweck</th>
+            <th>Überweisungsdatum</th>
+            <th>Betrag</th>
+            <th>Zugeordnete Rechnungen</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let match of matches">
+            <td>{{match.transaction.usage}}</td>
+            <td>{{match.transaction.transactionDate}}</td>
+            <td>{{match.transaction.amount}}</td>
+            <td><app-bills [bills]="[match.bill]"></app-bills></td>
+        </tr>
+    </tbody>
+</table>
