@@ -15,6 +15,7 @@ import { InitialBillsComponent } from './initial-bills/initial-bills.component';
 import { FilteredTransactionsComponent } from './filtered-transactions/filtered-transactions.component';
 import { TransactionsComponent } from './transactions/transactions.component';
 import { NotMatchedTransactionsComponent } from './not-matched-transactions/not-matched-transactions.component';
+import { TransactionMatcherService } from './transaction-matcher.service';
 
 
 const routes: Routes = [

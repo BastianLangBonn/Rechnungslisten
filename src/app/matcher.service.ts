@@ -51,7 +51,7 @@ export class MatcherService {
       // this.tap(console.log),
       this.filter.filterListedPayers,
       // this.tap(console.log),
-      this.transactionMatcher.findIdMatches,
+      this.transactionMatcher.findIdMatches.bind(this.transactionMatcher),
       // this.tap(console.log),
       this.findNameMatchesForTransactions,
       // this.tap(console.log)
