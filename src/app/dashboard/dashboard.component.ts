@@ -19,7 +19,7 @@ export class DashboardComponent implements OnInit {
   }
 
   public storeTables() {
-    this.persistenceService.storeMatches(this.matcher.matches);
+    this.persistenceService.storeData(this.matcher.matches);
   }
 
 }

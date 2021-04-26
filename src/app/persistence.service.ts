@@ -11,10 +11,10 @@ export class PersistenceService {
 
   constructor() {}
 
-  public storeMatches(match: MatchState) {
+  public storeData(match: MatchState) {
     this.storeBills(match.remainingBills.sort(compareId), 'openBills.csv');
     this.storeTransactions(match.unassignableTransactions.sort(comparePayer), 'openTransactions.csv')
-    this.storeMatchedTransactions(match.matches, 'closedBills.csv');
+    this.storeMatches(match.matches, 'closedBills.csv');
   }
 
   private storeBills(bills: Bill[], filename: string) {
@@ -29,7 +29,7 @@ export class PersistenceService {
     this.saveContent([header, ...content], filename);
   }
 
-  private storeMatchedTransactions(matches: Match[], filename: string) {
+  private storeMatches(matches: Match[], filename: string) {
     const matchedBills: Map<Bill, Transaction[]> = new Map();
     matches.map((match: Match) => match.bill).forEach((bill: Bill) => {
       if (!matchedBills.has(bill)) {
@@ -37,8 +37,8 @@ export class PersistenceService {
         matchedBills.set(bill, transactions);
       }
     });
-    const header = 'Rechnungsnummer;Name;Vorname;Betrag;Datum\n';
-    const content: string[] = [...matchedBills.keys()].map((bill: Bill) => `${bill.id};${bill.lastName};${bill.firstName};${bill.amount};${matchedBills.get(bill).map((transaction: Transaction) => transaction.transactionDate).join(', ')}`);
+    const header = 'Rechnungsnummer;Name;Vorname;Betrag;Ueberweisungsdatum\n';
+    const content: string[] = [...matchedBills.keys()].map((bill: Bill) => `${bill.id};${bill.lastName};${bill.firstName};${bill.amount};${matchedBills.get(bill).map((transaction: Transaction) => transaction.transactionDate).join(', ')}\n`);
     this.saveContent([header, ...content], filename);
   }
 
