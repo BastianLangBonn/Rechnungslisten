@@ -10,6 +10,8 @@ const FILTERED_PAYERS = [
   'Unfallkasse NRW',
   'BARMER',
   'BSCARD',
+  'Dr. Judith Nierlich',
+  'Dr. Judith Gertrud Magdalena Euphemia Nierlich'
 ];
 
 @Injectable({
