@@ -13,7 +13,6 @@ import { BillsComponent } from './bills/bills.component';
 import { InitialTransactionsComponent } from './initial-transactions/initial-transactions.component';
 import { InitialBillsComponent } from './initial-bills/initial-bills.component';
 import { FilteredTransactionsComponent } from './filtered-transactions/filtered-transactions.component';
-import { InvalidMatchesComponent } from './invalid-matches/invalid-matches.component';
 import { TransactionsComponent } from './transactions/transactions.component';
 import { NotMatchedTransactionsComponent } from './not-matched-transactions/not-matched-transactions.component';
 
@@ -29,7 +28,6 @@ const routes: Routes = [
   { path: 'initialBills', component: InitialBillsComponent },
   { path: 'assignBills/:id', component: AssignBillsComponent},
   { path: 'openBills', component: OpenBillsComponent },
-  { path: 'invalidMatches', component: InvalidMatchesComponent },
 ];
 @NgModule({
   declarations: [
@@ -43,7 +41,6 @@ const routes: Routes = [
     InitialTransactionsComponent,
     InitialBillsComponent,
     FilteredTransactionsComponent,
-    InvalidMatchesComponent,
     TransactionsComponent,
     NotMatchedTransactionsComponent
   ],

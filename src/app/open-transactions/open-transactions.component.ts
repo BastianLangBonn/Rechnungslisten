@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { changeComparer, compareAmount, compareAmountRev, comparePayer, comparePayerRev } from '../helper';
 import { MatcherService } from '../matcher.service';
+import { Transaction } from '../types';
 
 @Component({
   selector: 'app-open-transactions',
@@ -10,8 +11,11 @@ import { MatcherService } from '../matcher.service';
 export class OpenTransactionsComponent implements OnInit {
   public comparer = compareAmount;
   public reverse = true;
+  public remainingTransactions: Transaction[];
 
-  constructor(public matcher: MatcherService) { }
+  constructor(public matcher: MatcherService) {
+    this.remainingTransactions = matcher.matches.remainingTransactions;
+   }
 
   ngOnInit(): void {
   }

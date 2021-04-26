@@ -122,6 +122,20 @@ describe('TransactionMatcherService', () => {
       expect(result.remainingTransactions).toContain(t1);
       expect(result.remainingTransactions).toContain(t2);
     });
+
+    it('should not match if two transaction reference but only one fits', () => {
+      const t1: Transaction = generateTransaction(100, [1]);
+      const t2: Transaction = generateTransaction(110, [1]);
+      const bill: Bill = generateBill(110, 1);
+      const state: MatchState = generateState([bill], [t1, t2]);
+      const result: MatchState = service.findIdMatches(state);
+      expect(result.matches.length).toEqual(0);
+      expect(result.remainingBills.length).toEqual(1);
+      expect(result.remainingTransactions.length).toEqual(2);
+      expect(result.remainingTransactions).toContain(t1);
+      expect(result.remainingTransactions).toContain(t2);
+      expect(result.remainingBills).toContain(bill);
+    });
   });
 });
 

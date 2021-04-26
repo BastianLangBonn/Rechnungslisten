@@ -22,7 +22,7 @@ export class TransactionMatcherService {
         transactionMap.set(transaction, []);
       }
       const bills: Bill[] = transactionMap.get(transaction);
-      idsOfTransaction.forEach((id: string) => {
+      idsOfTransaction?.forEach((id: string) => {
         const bill = state.remainingBills.find(bill => bill.id === id);
         if (bill) {
           bills.push(bill);
