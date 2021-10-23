@@ -1,9 +1,11 @@
 <h1>Überblick</h1>
-<div routerLink="/initialBills">Rechnungen Gesamt: {{matcher.matches.initialBills.length}}</div>
-<div routerLink="/initialTransactions">Zahlungen Gesamt: {{matcher.matches.initialTransactions.length}}</div>
-<div routerLink="/assignedTransactions">Zugewiesene Zahlungen: {{matcher.matches.matches.length}}</div>
-<div routerLink="/filteredTransactions">Aussortierte Zahlungen: {{matcher.matches.filteredTransactions.length}}</div>
-<div routerLink="/notMatchedTransactions">Nicht zugewiesene Zahlungen: {{matcher.matches.unassignableTransactions.length}}</div>
-<div routerLink="/openBills">Übrige Rechnungen: {{matcher.matches.remainingBills.length}}</div>
-<div routerLink="/openTransactions">Manuell zu prüfende Zahlungen: {{matcher.matches.remainingTransactions.length}}</div>
+<div class="board">
+    <app-card routerLink="/initialBills" [title]="'Alle Rechnungen'" [totalAmount]="matcher.matches.initialBills.length"></app-card>
+    <app-card routerLink="/initialTransactions" [title]="'Alle Zahlungen'" [totalAmount]="matcher.matches.initialTransactions.length"></app-card>
+    <app-card routerLink="/assignedTransactions" [title]="'Zugeordnete Zahlungen'" [totalAmount]="matcher.matches.matches.length"></app-card>
+    <app-card routerLink="/filteredTransactions" [title]="'Ignorierte Zahlungen'" [totalAmount]="matcher.matches.filteredTransactions.length"></app-card>
+    <app-card routerLink="/notMatchedTransactions" [title]="'Nicht zuzuordnende Zahlungen'" [totalAmount]="matcher.matches.unassignableTransactions.length"></app-card>
+    <app-card routerLink="/openBills" [title]="'Offene Rechnungen'" [totalAmount]="matcher.matches.remainingBills.length"></app-card>
+    <app-card routerLink="/openTransactions" [title]="'Zahlungen Manuell zuweisen'" [totalAmount]="matcher.matches.remainingTransactions.length"></app-card>
+</div>
 <button class="save" (click)="storeTables()">Save</button>

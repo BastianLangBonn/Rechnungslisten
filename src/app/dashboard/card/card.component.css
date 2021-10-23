@@ -1,0 +1,27 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid black;
+    border-radius: 5px;
+    margin: 5px;
+    padding: 15px;
+    box-shadow: 1px 1px lightslategray ;
+}
+
+.container:hover {
+    background-color: #AAAAAA;
+}
+
+.container:active {
+    background-color: lightslategray;
+    box-shadow: none;
+}
+
+.info {
+    font-size: 0.75rem;
+}
+
+.container > div {
+    margin: 5px;
+}

@@ -1,1 +1,5 @@
-<p>card works!</p>
+<div class="container">
+    <div class="title">{{title}}</div>
+    <div class="info" *ngIf="totalAmount != undefined">{{"#" + totalAmount}}</div>
+    <div class="info" *ngIf="totalMoney != undefined">{{"€" + totalMoney}}</div>
+</div>
