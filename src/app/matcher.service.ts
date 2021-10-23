@@ -30,13 +30,20 @@ export class MatcherService {
         private filter: FilterService,
         private transactionMatcher: TransactionMatcherService
     ) {
-    forkJoin([this.transactionCollector.transactions$,this.billCollector.bills$]).subscribe(([transactions, bills]) => {
-      this.matches = this.match(bills, transactions);
-    });
+    forkJoin([
+        this.transactionCollector.transactions$,
+        this.billCollector.bills$
+      ]).subscribe(
+        ([
+          transactions,
+          bills
+        ]) => {
+          this.matches = this.match(bills, transactions);
+      });
    }
 
   private pipe = (...fns: any[]) => (x: any) => fns.reduce((v, f) => f(v), x);
-  private tap = (fn: any) => (x: any) => {fn(x); return x;};
+  // private tap = (fn: any) => (x: any) => {fn(x); return x;};
 
   private match(bills: Bill[], transactions: Transaction[]): MatchState {
     const initialState: MatchState = EMPTY_STATE;
