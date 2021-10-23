@@ -16,6 +16,7 @@ import { FilteredTransactionsComponent } from './filtered-transactions/filtered-
 import { TransactionsComponent } from './transactions/transactions.component';
 import { NotMatchedTransactionsComponent } from './not-matched-transactions/not-matched-transactions.component';
 import { TransactionMatcherService } from './transaction-matcher.service';
+import { CardComponent } from './dashboard/card/card.component';
 
 
 const routes: Routes = [
@@ -43,7 +44,8 @@ const routes: Routes = [
     InitialBillsComponent,
     FilteredTransactionsComponent,
     TransactionsComponent,
-    NotMatchedTransactionsComponent
+    NotMatchedTransactionsComponent,
+    CardComponent
   ],
   imports: [
     BrowserModule,
