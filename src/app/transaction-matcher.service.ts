@@ -24,9 +24,9 @@ export class TransactionMatcherService {
   private updateState(state: MatchState, matches: Match[]): MatchState {
     return {
       ...state,
-      matches: state.matches.concat(matches),
-      remainingBills: state.remainingBills.filter((bill: Bill) => !matches.map((match: Match) => match.bill).includes(bill)),
-      remainingTransactions: state.remainingTransactions.filter((transaction: Transaction) => !matches.map((match: Match) => match.transaction).includes(transaction))
+      validMatches: state.validMatches.concat(matches),
+      openBills: state.openBills.filter((bill: Bill) => !matches.map((match: Match) => match.bill).includes(bill)),
+      openTransactions: state.openTransactions.filter((transaction: Transaction) => !matches.map((match: Match) => match.transaction).includes(transaction))
     };
   }
 
@@ -65,14 +65,14 @@ export class TransactionMatcherService {
   private buildMaps(state: MatchState): { transactionMap: Map<Transaction, Bill[]>; billMap: Map<Bill, Transaction[]>; } {
     const transactionMap: Map<Transaction, Bill[]> = new Map();
     const billMap: Map<Bill, Transaction[]> = new Map();
-    state.remainingTransactions.forEach(transaction => {
+    state.openTransactions.forEach(transaction => {
       const idsOfTransaction: string[] = transaction.usage.match(/\d+/g);
       if (!transactionMap.has(transaction)) {
         transactionMap.set(transaction, []);
       }
       const bills: Bill[] = transactionMap.get(transaction);
       idsOfTransaction?.forEach((id: string) => {
-        const bill = state.remainingBills.find(bill => bill.id === id);
+        const bill = state.openBills.find(bill => bill.id === id);
         if (bill) {
           bills.push(bill);
           if (!billMap.has(bill)) {

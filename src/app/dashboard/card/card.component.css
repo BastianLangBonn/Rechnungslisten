@@ -6,11 +6,12 @@
     border-radius: 5px;
     margin: 5px;
     padding: 15px;
-    box-shadow: 1px 1px lightslategray ;
+    box-shadow: 3px 3px lightslategray ;
 }
 
 .container:hover {
     background-color: #AAAAAA;
+    box-shadow: 1px 1px lightslategray ;
 }
 
 .container:active {

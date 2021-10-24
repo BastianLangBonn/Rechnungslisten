@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MatchState } from './types';
+import { MatchState, Transaction } from './types';
 
 const FILTERED_PAYERS = [
   'Kassenzahnarztliche Vereinigung Nordrhein',
@@ -27,19 +27,22 @@ export class FilterService {
     }
     return {
       ...state,
-      remainingTransactions: state.remainingTransactions.filter(transaction => transaction.amount > 0),
-      filteredTransactions: state.remainingTransactions.filter(transaction => transaction.amount < 0),
+      openTransactions: state.openTransactions.filter(transaction => transaction.amount > 0),
+      ignoredTransactions: state.openTransactions.filter(transaction => transaction.amount < 0),
     }
   }
 
   public filterListedPayers(state: MatchState): MatchState {
-    if(!state) {
+    if (!state) {
       throw new Error('State is not set');
     }
+    const shallPayerBeIgnored = (payer: string) => FILTERED_PAYERS.includes(payer);
+    const remainingTransactions = state.openTransactions.filter(transaction => !shallPayerBeIgnored(transaction.payer));
+    const transactionsToIgnore = state.openTransactions.filter(transaction => shallPayerBeIgnored(transaction.payer));
     return {
       ...state,
-      remainingTransactions: state.remainingTransactions.filter(transaction => !FILTERED_PAYERS.includes(transaction.payer)),
-      filteredTransactions: state.filteredTransactions.concat(state.remainingTransactions.filter(transaction => FILTERED_PAYERS.includes(transaction.payer))),
-    }
+      openTransactions: remainingTransactions,
+      ignoredTransactions: [...state.ignoredTransactions, ...transactionsToIgnore],
+    };
   }
 }

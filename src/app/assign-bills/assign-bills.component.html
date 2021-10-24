@@ -32,7 +32,7 @@
 
 <h3>Passender Betrag</h3>
 <div class="Amount">
-    <div *ngFor="let bill of matcher.matches.remainingBills.filter(isAmountEqualToBill).sort(comparer)">
+    <div *ngFor="let bill of matcher.matches.openBills.filter(isAmountEqualToBill).sort(comparer)">
         <div class="entry" [class.selected]="isSelected(bill)" (click)="selectBill(bill)">
             <span class="parameter">
                 {{bill.id}}
@@ -52,7 +52,7 @@
 
 <h3>Passender Kontoinhaber</h3>
 <div class="Payer">
-    <div *ngFor="let bill of matcher.matches.remainingBills.filter(isPayerInBill).sort(comparer)">
+    <div *ngFor="let bill of matcher.matches.openBills.filter(isPayerInBill).sort(comparer)">
         <div class="entry" [class.selected]="isSelected(bill)" (click)="selectBill(bill)">
             <span class="parameter">
                 {{bill.id}}
@@ -72,7 +72,7 @@
 
 <h3>Rechnungsnummer in Verwendungszweck</h3>
 <div class="BillId">
-    <div *ngFor="let bill of matcher.matches.remainingBills.filter(isIdInBill).sort(comparer)">
+    <div *ngFor="let bill of matcher.matches.openBills.filter(isIdInBill).sort(comparer)">
         <div class="entry" [class.selected]="isSelected(bill)" (click)="selectBill(bill)">
             <span class="parameter">
                 {{bill.id}}

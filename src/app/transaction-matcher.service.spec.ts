@@ -15,7 +15,7 @@ describe('TransactionMatcherService', () => {
     expect(service).toBeTruthy();
   });
 
-  fdescribe('findIdMatches', () => {
+  describe('findIdMatches', () => {
     it('should throw an error if state is null', () => {
       expect(() => service.findIdMatches(null)).toThrowError('state is not set');
     });
@@ -39,10 +39,10 @@ describe('TransactionMatcherService', () => {
       const bill: Bill = generateBill(amount, id);
       const state: MatchState = generateState([bill], [transaction]);
       const result: MatchState = service.findIdMatches(state);
-      const matches: Match[] = result.matches;
-      expect(result.remainingBills.length).toEqual(0);
-      expect(result.remainingTransactions.length).toEqual(0);
-      expect(result.matches.length).toEqual(1);
+      const matches: Match[] = result.validMatches;
+      expect(result.openBills.length).toEqual(0);
+      expect(result.openTransactions.length).toEqual(0);
+      expect(result.validMatches.length).toEqual(1);
       expect(matches[0].bill).toEqual(bill);
       expect(matches[0].transaction).toEqual(transaction);
     });
@@ -52,9 +52,9 @@ describe('TransactionMatcherService', () => {
       const bill: Bill = generateBill(50, 1234);
       const state: MatchState = generateState([bill], [transaction]);
       const result: MatchState = service.findIdMatches(state);
-      expect(result.remainingTransactions).toContain(transaction);
-      expect(result.remainingBills).toContain(bill);
-      expect(result.matches.length).toEqual(0);
+      expect(result.openTransactions).toContain(transaction);
+      expect(result.openBills).toContain(bill);
+      expect(result.validMatches.length).toEqual(0);
     });
 
     it('should not match 1 on 1 for not matching IDs with matching amounts', () => {
@@ -62,9 +62,9 @@ describe('TransactionMatcherService', () => {
       const bill: Bill = generateBill(100, 2);
       const state: MatchState = generateState([bill], [transaction]);
       const result: MatchState = service.findIdMatches(state);
-      expect(result.remainingTransactions).toContain(transaction);
-      expect(result.remainingBills).toContain(bill);
-      expect(result.matches.length).toEqual(0);
+      expect(result.openTransactions).toContain(transaction);
+      expect(result.openBills).toContain(bill);
+      expect(result.validMatches.length).toEqual(0);
     });
 
     it('should match 1 to n if IDs and amounts are right', () => {
@@ -73,27 +73,27 @@ describe('TransactionMatcherService', () => {
       const b2: Bill = generateBill(150, 2);
       const state: MatchState = generateState([b1, b2], [transaction]);
       const result: MatchState = service.findIdMatches(state);
-      const matches: Match[] = result.matches;
+      const matches: Match[] = result.validMatches;
       expect(matches.length).toEqual(2);
-      expect(result.remainingBills.length).toEqual(0);
-      expect(result.remainingTransactions.length).toEqual(0);
+      expect(result.openBills.length).toEqual(0);
+      expect(result.openTransactions.length).toEqual(0);
       expect(matches).toContain({bill: b1, transaction});
       expect(matches).toContain({bill: b2, transaction});
     });
 
-    it('should not match 1 to n for matching IDs and not matching amounts', () =>{
+    it('should not match 1 to n for matching IDs and not matching amounts', () => {
       const transaction: Transaction = generateTransaction(200, [1, 2]);
       const b1: Bill = generateBill(75, 1);
       const b2: Bill = generateBill(150, 2);
       const state: MatchState = generateState([b1, b2], [transaction]);
       const result: MatchState = service.findIdMatches(state);
-      const validMatches: Match[] = result.matches;
+      const validMatches: Match[] = result.validMatches;
       expect(validMatches.length).toEqual(0);
-      expect(result.remainingBills.length).toEqual(2);
-      expect(result.remainingTransactions.length).toEqual(1);
-      expect(state.remainingBills).toContain(b1);
-      expect(state.remainingBills).toContain(b2);
-      expect(state.remainingTransactions).toContain(transaction);
+      expect(result.openBills.length).toEqual(2);
+      expect(result.openTransactions.length).toEqual(1);
+      expect(state.openBills).toContain(b1);
+      expect(state.openBills).toContain(b2);
+      expect(state.openTransactions).toContain(transaction);
     });
 
     it('should match m to 1 if ID and Amounts are correct', () => {
@@ -102,11 +102,11 @@ describe('TransactionMatcherService', () => {
       const bill: Bill = generateBill(200, 1);
       const state: MatchState = generateState([bill], [t1, t2]);
       const result: MatchState = service.findIdMatches(state);
-      expect(result.matches.length).toEqual(2);
-      expect(result.remainingBills.length).toEqual(0);
-      expect(result.remainingTransactions.length).toEqual(0);
-      expect(result.matches).toContain({bill, transaction: t1});
-      expect(result.matches).toContain({bill, transaction: t2});
+      expect(result.validMatches.length).toEqual(2);
+      expect(result.openBills.length).toEqual(0);
+      expect(result.openTransactions.length).toEqual(0);
+      expect(result.validMatches).toContain({bill, transaction: t1});
+      expect(result.validMatches).toContain({bill, transaction: t2});
     });
 
     it('should not match m to 1 if amounts are wrong', () => {
@@ -115,12 +115,12 @@ describe('TransactionMatcherService', () => {
       const bill: Bill = generateBill(200, 1);
       const state: MatchState = generateState([bill], [t1, t2]);
       const result: MatchState = service.findIdMatches(state);
-      expect(result.matches.length).toEqual(0);
-      expect(result.remainingBills.length).toEqual(1);
-      expect(result.remainingTransactions.length).toEqual(2);
-      expect(result.remainingBills).toContain(bill);
-      expect(result.remainingTransactions).toContain(t1);
-      expect(result.remainingTransactions).toContain(t2);
+      expect(result.validMatches.length).toEqual(0);
+      expect(result.openBills.length).toEqual(1);
+      expect(result.openTransactions.length).toEqual(2);
+      expect(result.openBills).toContain(bill);
+      expect(result.openTransactions).toContain(t1);
+      expect(result.openTransactions).toContain(t2);
     });
 
     it('should not match if two transaction reference but only one fits', () => {
@@ -129,27 +129,27 @@ describe('TransactionMatcherService', () => {
       const bill: Bill = generateBill(110, 1);
       const state: MatchState = generateState([bill], [t1, t2]);
       const result: MatchState = service.findIdMatches(state);
-      expect(result.matches.length).toEqual(0);
-      expect(result.remainingBills.length).toEqual(1);
-      expect(result.remainingTransactions.length).toEqual(2);
-      expect(result.remainingTransactions).toContain(t1);
-      expect(result.remainingTransactions).toContain(t2);
-      expect(result.remainingBills).toContain(bill);
+      expect(result.validMatches.length).toEqual(0);
+      expect(result.openBills.length).toEqual(1);
+      expect(result.openTransactions.length).toEqual(2);
+      expect(result.openTransactions).toContain(t1);
+      expect(result.openTransactions).toContain(t2);
+      expect(result.openBills).toContain(bill);
     });
   });
 });
 
 const generateEmptyState = (): MatchState => {
   return {
-    filteredTransactions: [],
+    ignoredTransactions: [],
     initialBills: [],
     initialTransactions: [],
-    remainingBills: [],
-    matches: [],
-    remainingTransactions: [],
+    openBills: [],
+    validMatches: [],
+    openTransactions: [],
     unassignableTransactions: []
   };
-}
+};
 
 const generateTransaction = (amount: number, id: number[]): Transaction => {
   return {
@@ -189,9 +189,8 @@ const generateBill = (amount: number, id: number): Bill => {
     taxFull: 0,
     taxReduced: 0,
   };
-}
+};
 
 const generateState = (bills: Bill[], transactions: Transaction[]): MatchState => {
-  return { ...generateEmptyState(), remainingBills: bills, remainingTransactions: transactions };
-}
-
+  return { ...generateEmptyState(), openBills: bills, openTransactions: transactions };
+};

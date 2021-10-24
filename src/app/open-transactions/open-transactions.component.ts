@@ -14,7 +14,7 @@ export class OpenTransactionsComponent implements OnInit {
   public remainingTransactions: Transaction[];
 
   constructor(public matcher: MatcherService) {
-    this.remainingTransactions = matcher.matches.remainingTransactions;
+    this.remainingTransactions = matcher.matches.openTransactions;
    }
 
   ngOnInit(): void {

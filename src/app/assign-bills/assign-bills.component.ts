@@ -31,7 +31,7 @@ export class AssignBillsComponent implements OnInit {
 
   public getTransaction(): void {
     const id = +this.route.snapshot.paramMap.get('id');
-    this.transaction = this.matcher.matches.remainingTransactions[id];
+    this.transaction = this.matcher.matches.openTransactions[id];
   }
 
   public changeComparer(type: string): void {
@@ -62,11 +62,11 @@ export class AssignBillsComponent implements OnInit {
   }
 
   private getNextTransaction(): void {
-    if           (this.matcher.matches.remainingTransactions.length === 0) {
+    if           (this.matcher.matches.openTransactions.length === 0) {
       this.router.navigate(['/dashboard']);
       return;
     }
-    this.transaction = this.matcher.matches.remainingTransactions[0];
+    this.transaction = this.matcher.matches.openTransactions[0];
     this.selectedBills = [];
   }
 

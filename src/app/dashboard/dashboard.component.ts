@@ -9,6 +9,9 @@ import { PersistenceService } from '../persistence.service';
 })
 export class DashboardComponent implements OnInit {
 
+  public title = 'Rechnungslistenvergleich';
+  public buttonText = 'Speichern';
+
   constructor(
     public matcher: MatcherService,
     private persistenceService: PersistenceService,
@@ -18,7 +21,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  public storeTables() {
+  public storeTables(): void {
     this.persistenceService.storeData(this.matcher.matches);
   }
 

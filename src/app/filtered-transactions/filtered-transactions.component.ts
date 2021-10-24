@@ -14,7 +14,7 @@ export class FilteredTransactionsComponent implements OnInit {
   constructor(private matcher: MatcherService) { }
 
   ngOnInit(): void {
-    this.transactions = this.matcher.matches.filteredTransactions;
+    this.transactions = this.matcher.matches.ignoredTransactions;
   }
 
 }

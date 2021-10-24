@@ -25,16 +25,16 @@ describe('FilterService', () => {
       const transaction: Transaction = generateTransaction(100);
       const state: MatchState = generateInitialState([transaction]);
       const result: MatchState = service.filterNegativeTransactions(state);
-      expect(result.remainingTransactions).toContain(transaction);
-      expect(result.filteredTransactions).toEqual([]);
+      expect(result.openTransactions).toContain(transaction);
+      expect(result.ignoredTransactions).toEqual([]);
     });
 
     it('should filter transaction if amount is negative', () => {
       const transaction: Transaction = generateTransaction(-10);
       const state: MatchState = generateInitialState([transaction])
       const result: MatchState = service.filterNegativeTransactions(state);
-      expect(result.remainingTransactions).toEqual([]);
-      expect(result.filteredTransactions).toContain(transaction);
+      expect(result.openTransactions).toEqual([]);
+      expect(result.ignoredTransactions).toContain(transaction);
     });
 
     it('should remove negative, but keep positive transactions' , () => {
@@ -45,13 +45,13 @@ describe('FilterService', () => {
       const t5: Transaction = generateTransaction(-9912);
       const state: MatchState = generateInitialState([t1, t2, t3, t4, t5]);
       const result: MatchState = service.filterNegativeTransactions(state);
-      expect(result.remainingTransactions.length).toEqual(3);
-      expect(result.remainingTransactions).toContain(t1);
-      expect(result.remainingTransactions).toContain(t2);
-      expect(result.remainingTransactions).toContain(t4);
-      expect(result.filteredTransactions.length).toEqual(2);
-      expect(result.filteredTransactions).toContain(t3);
-      expect(result.filteredTransactions).toContain(t5);
+      expect(result.openTransactions.length).toEqual(3);
+      expect(result.openTransactions).toContain(t1);
+      expect(result.openTransactions).toContain(t2);
+      expect(result.openTransactions).toContain(t4);
+      expect(result.ignoredTransactions.length).toEqual(2);
+      expect(result.ignoredTransactions).toContain(t3);
+      expect(result.ignoredTransactions).toContain(t5);
     });
 
     it('should not manipulate the input', () => {
@@ -59,10 +59,10 @@ describe('FilterService', () => {
       const state: MatchState = generateInitialState([transaction]);
       const result: MatchState = service.filterNegativeTransactions(state);
       expect(result === state).toBeFalse();
-      expect(state.remainingTransactions.length).toEqual(1);
-      expect(state.filteredTransactions.length).toEqual(0);
-      expect(result.remainingTransactions.length).toEqual(0);
-      expect(result.filteredTransactions.length).toEqual(1);
+      expect(state.openTransactions.length).toEqual(1);
+      expect(state.ignoredTransactions.length).toEqual(0);
+      expect(result.openTransactions.length).toEqual(0);
+      expect(result.ignoredTransactions.length).toEqual(1);
     });
   });
 
@@ -81,16 +81,16 @@ describe('FilterService', () => {
       const transaction: Transaction = {...generateTransaction(100), payer: 'DAMPSOFT GmbH'};
       const state: MatchState = generateInitialState([transaction]);
       const result: MatchState = service.filterListedPayers(state);
-      expect(result.filteredTransactions).toContain(transaction);
-      expect(result.remainingTransactions.length).toEqual(0);
+      expect(result.ignoredTransactions).toContain(transaction);
+      expect(result.openTransactions.length).toEqual(0);
     });
 
     it('should not filter payers that are not on the list', () => {
       const transaction: Transaction = {...generateTransaction(1), payer: "Someone Else"};
       const state: MatchState = generateInitialState([transaction]);
       const result: MatchState = service.filterListedPayers(state);
-      expect(result.remainingTransactions).toContain(transaction);
-      expect(result.filteredTransactions.length).toEqual(0);
+      expect(result.openTransactions).toContain(transaction);
+      expect(result.ignoredTransactions.length).toEqual(0);
     });
 
     it('should filter only payers from list and leave the rest', () => {
@@ -100,10 +100,10 @@ describe('FilterService', () => {
       const t4: Transaction = {...generateTransaction(10), payer: 'Rick Morty'};
       const state: MatchState = generateInitialState([t1, t2, t3, t4]);
       const result: MatchState = service.filterListedPayers(state);
-      expect(result.remainingTransactions).toContain(t2);
-      expect(result.remainingTransactions).toContain(t4);
-      expect(result.filteredTransactions).toContain(t1);
-      expect(result.filteredTransactions).toContain(t3);
+      expect(result.openTransactions).toContain(t2);
+      expect(result.openTransactions).toContain(t4);
+      expect(result.ignoredTransactions).toContain(t1);
+      expect(result.ignoredTransactions).toContain(t3);
     });
   });
 });
@@ -129,16 +129,16 @@ const generateTransaction = (amount: number): Transaction => {
     valutaData: 'valutaDate',
     comment: 'comment'
   };
-}
+};
 
 const generateInitialState = (remainingTransactions: Transaction[]): MatchState => {
   return {
-    filteredTransactions: [],
+    ignoredTransactions: [],
     initialBills: [],
     initialTransactions: [],
-    remainingBills: [],
-    remainingTransactions,
-    matches: [],
+    openBills: [],
+    openTransactions: remainingTransactions,
+    validMatches: [],
     unassignableTransactions: [],
   };
-}
+};
