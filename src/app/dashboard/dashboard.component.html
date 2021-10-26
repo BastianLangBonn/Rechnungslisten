@@ -1,6 +1,6 @@
 <h1>{{title}}</h1>
 <div class="board">
-    <app-card routerLink="/openTransactions" [title]="'Zahlungen Manuell zuweisen'" [totalAmount]="matcher.matches.remainingTransactions.length"></app-card>
+    <app-card routerLink="/openTransactions" [title]="'Zahlungen Manuell zuweisen'" [totalAmount]="matcher.matches.openTransactions.length"></app-card>
     <app-card routerLink="/initialBills" [title]="'Alle Rechnungen'" [totalAmount]="matcher.matches.initialBills.length"></app-card>
     <app-card routerLink="/initialTransactions" [title]="'Alle Zahlungen'" [totalAmount]="matcher.matches.initialTransactions.length"></app-card>
     <app-card routerLink="/assignedTransactions" [title]="'Zugeordnete Zahlungen'" [totalAmount]="matcher.matches.validMatches.length"></app-card>

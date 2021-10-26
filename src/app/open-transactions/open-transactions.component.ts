@@ -11,10 +11,10 @@ import { Transaction } from '../types';
 export class OpenTransactionsComponent implements OnInit {
   public comparer = compareAmount;
   public reverse = true;
-  public remainingTransactions: Transaction[];
+  public openTransactions: Transaction[];
 
   constructor(public matcher: MatcherService) {
-    this.remainingTransactions = matcher.matches.openTransactions;
+    this.openTransactions = matcher.matches.openTransactions;
    }
 
   ngOnInit(): void {

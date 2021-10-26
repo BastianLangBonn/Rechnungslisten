@@ -20,7 +20,7 @@
     (click)="commentBox.value !== '' ? removeTransaction(commentBox.value) : removeTransaction(commentBox.placeholder)">
     Keine passende Rechnung
 </button>
-<div class="remaining">Verbleibende Zahlungen: {{matcher.matches.remainingTransactions.length}}</div>
+<div class="remaining">Verbleibende Zahlungen: {{matcher.matches.openTransactions.length}}</div>
 <h2>Offene Rechnungen</h2>
 <button class="assign" [disabled]="selectedBills.length === 0" (click)="assignBills()">Rechnungen Zuweisen</button>
 <div class="header">

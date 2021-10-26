@@ -72,7 +72,7 @@ export interface MatchState {
   initialTransactions: Transaction[];
   /** All transactions that have been marked to ignore */
   ignoredTransactions: Transaction[];
-  /** All transactions that need further processing */
+  /** All transactions that cannot be assigned to any bill */
   unassignableTransactions: Transaction[];
   /** All valid matches found */
   validMatches: Match[];

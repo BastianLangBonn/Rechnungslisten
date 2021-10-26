@@ -10,7 +10,7 @@
         </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let transaction of matcher.matches.remainingTransactions.sort(comparer), index as i">
+        <tr *ngFor="let transaction of openTransactions.sort(comparer), index as i">
             <td class="right" routerLink="/assignBills/{{i}}">{{transaction.amount}}</td>
             <td class="left" routerLink="/assignBills/{{i}}">{{transaction.payer}}</td>
             <td class="left" routerLink="/assignBills/{{i}}">{{transaction.usage}}</td>
