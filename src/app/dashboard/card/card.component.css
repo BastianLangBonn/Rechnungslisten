@@ -7,6 +7,8 @@
     margin: 5px;
     padding: 15px;
     box-shadow: 3px 3px lightslategray ;
+    background: radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(252,70,107,1) 100%);
+    color: #fff;
 }
 
 .container:hover {
@@ -17,6 +19,7 @@
 .container:active {
     background-color: lightslategray;
     box-shadow: none;
+    transform: scale(.98);
 }
 
 .info {
