@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { changeComparer, compareAmount, compareAmountRev, comparePayer, comparePayerRev } from '../helper';
+import { getComparisonMethod, compareAmount, compareAmountRev, comparePayer, comparePayerRev } from '../helper';
 import { MatcherService } from '../matcher.service';
 import { Transaction } from '../types';
 
@@ -21,7 +21,7 @@ export class OpenTransactionsComponent implements OnInit {
   }
 
   changeComparer(type: string): void {
-    this.comparer = changeComparer(type, this.reverse);
+    this.comparer = getComparisonMethod(type, this.reverse);
     this.reverse = !this.reverse;
   }
 

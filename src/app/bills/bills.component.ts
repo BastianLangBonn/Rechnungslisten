@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { changeComparer, compareId } from '../helper';
+import { getComparisonMethod, compareId } from '../helper';
 import { Bill } from '../types';
 
 @Component({
@@ -21,7 +21,7 @@ export class BillsComponent implements OnInit {
   }
 
   changeComparer(type: string): void {
-    this.comparer = changeComparer(type, this.reversed);
+    this.comparer = getComparisonMethod(type, this.reversed);
     this.reversed = !this.reversed;
   }
 
