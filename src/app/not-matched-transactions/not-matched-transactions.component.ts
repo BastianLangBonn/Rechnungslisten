@@ -14,7 +14,7 @@ export class NotMatchedTransactionsComponent implements OnInit {
   constructor(private matcher: MatcherService) { }
 
   ngOnInit(): void {
-    this.transactions = this.matcher.matches.unassignableTransactions;
+    this.transactions = this.matcher.getUnassignableTransactions();
   }
 
 }

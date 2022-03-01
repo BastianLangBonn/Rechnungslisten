@@ -16,7 +16,7 @@ export class InitialTransactionsComponent implements OnInit {
   constructor(private matcher: MatcherService) { }
 
   ngOnInit(): void {
-    this.transactions = this.matcher.matches.initialTransactions;
+    this.transactions = this.matcher.getInitialTransactions();
   }
 
 }

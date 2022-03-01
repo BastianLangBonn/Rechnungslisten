@@ -14,8 +14,8 @@ export class OpenTransactionsComponent implements OnInit {
   public openTransactions: Transaction[];
 
   constructor(public matcher: MatcherService) {
-    this.openTransactions = matcher.matches.openTransactions;
-   }
+    this.openTransactions = matcher.getOpenTransactions();
+  }
 
   ngOnInit(): void {
   }

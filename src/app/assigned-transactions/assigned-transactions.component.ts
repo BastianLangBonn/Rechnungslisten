@@ -14,7 +14,7 @@ export class AssignedTransactionsComponent implements OnInit {
   constructor(public matcher: MatcherService) { }
 
   ngOnInit(): void {
-    this.matches = this.matcher.matches.validMatches;
+    this.matches = this.matcher.getValidMatches();
   }
 
 }

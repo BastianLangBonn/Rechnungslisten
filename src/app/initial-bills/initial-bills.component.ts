@@ -14,7 +14,7 @@ export class InitialBillsComponent implements OnInit {
   constructor(private matcher: MatcherService) { }
 
   ngOnInit(): void {
-    this.bills = this.matcher.matches.initialBills;
+    this.bills = this.matcher.getInitialBills();
   }
 
 }

@@ -22,7 +22,7 @@ export class DashboardComponent implements OnInit {
   }
 
   public storeTables(): void {
-    this.persistenceService.storeData(this.matcher.matches);
+    this.persistenceService.storeData(this.matcher.getMatches());
   }
 
 }

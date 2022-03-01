@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { getComparisonMethod, compareId} from '../helper';
+import { getComparisonMethod, compareId } from '../helper';
 import { MatcherService } from '../matcher.service';
 import { Bill, Transaction } from '../types';
 
@@ -37,7 +37,7 @@ export class AssignBillsComponent implements OnInit {
 
   public ngOnInit(): void {
     this.getTransaction();
-    const openBills: Bill[] = this.matcherService.matches.openBills;
+    const openBills: Bill[] = this.matcherService.getOpenBills();
     this.billsMatchedByAmount = openBills.filter(this.isAmountEqualToBill);
     this.billsMatchedByPayer = openBills.filter(this.isPayerInBill);
     this.billsMatchedById = openBills.filter(this.isIdInBill);
@@ -45,7 +45,7 @@ export class AssignBillsComponent implements OnInit {
 
   private getTransaction(): void {
     const id = +this.route.snapshot.paramMap.get('id');
-    this.transaction = this.matcherService.matches.openTransactions[id];
+    this.transaction = this.matcherService.getOpenTransaction(id);
   }
 
   public changeComparer(type: string): void {
@@ -76,16 +76,16 @@ export class AssignBillsComponent implements OnInit {
   }
 
   private getNextTransaction(): void {
-    if (this.matcherService.matches.openTransactions.length === 0) {
+    const openTransactions = this.matcherService.getOpenTransactions();
+    if (openTransactions.length === 0) {
       this.router.navigate(['/dashboard']);
       return;
     }
-    this.transaction = this.matcherService.matches.openTransactions[0];
+    this.transaction = openTransactions[0];
     this.selectedBills = [];
   }
 
   private isAmountEqualToBill(bill: Bill): boolean {
-    console.log(this);
     return this.transaction.amount === bill.amount;
   }
 
