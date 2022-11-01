@@ -38,9 +38,9 @@ export class AssignBillsComponent implements OnInit {
   public ngOnInit(): void {
     this.getTransaction();
     const openBills: Bill[] = this.matcherService.getOpenBills();
-    this.billsMatchedByAmount = openBills.filter(this.isAmountEqualToBill);
-    this.billsMatchedByPayer = openBills.filter(this.isPayerInBill);
-    this.billsMatchedById = openBills.filter(this.isIdInBill);
+    this.billsMatchedByAmount = openBills.filter(this.isAmountEqualToBill.bind(this));
+    this.billsMatchedByPayer = openBills.filter(this.isPayerInBill.bind(this));
+    this.billsMatchedById = openBills.filter(this.isIdInBill.bind(this));
   }
 
   private getTransaction(): void {
