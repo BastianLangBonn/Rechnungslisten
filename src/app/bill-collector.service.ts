@@ -17,7 +17,7 @@ export class BillCollectorService {
     this.bills$ = this.loadBills(INDEX_XML_FILEPATH);
    }
 
-  private loadBills(filepath: string) {
+  private loadBills(filepath: string): Observable<any> {
     return this.http.get(filepath, {responseType: 'text'})
       .pipe(
         switchMap(data => {
@@ -27,7 +27,7 @@ export class BillCollectorService {
       );
   }
 
-  private handleJsonData(json): Observable<Bill[]> {
+  private handleJsonData(json: any): Observable<Bill[]> {
     const fileHeaders = this.readFileHeadersFromJson(json);
     // const billsHeader = fileHeaders.filter(header => header.url === 'rechnungen.txt')[0];
     const clientsHeader = fileHeaders.filter(header => header.url === 'patienten.txt')[0];

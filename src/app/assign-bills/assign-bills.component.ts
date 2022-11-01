@@ -36,16 +36,20 @@ export class AssignBillsComponent implements OnInit {
   ) { }
 
   public ngOnInit(): void {
-    this.getTransaction();
+    this.updateBills();
+  }
+
+  private updateBills(): void {
+    this.transaction = this.getTransaction();
     const openBills: Bill[] = this.matcherService.getOpenBills();
     this.billsMatchedByAmount = openBills.filter(this.isAmountEqualToBill.bind(this));
     this.billsMatchedByPayer = openBills.filter(this.isPayerInBill.bind(this));
     this.billsMatchedById = openBills.filter(this.isIdInBill.bind(this));
   }
 
-  private getTransaction(): void {
+  private getTransaction(): Transaction {
     const id = +this.route.snapshot.paramMap.get('id');
-    this.transaction = this.matcherService.getOpenTransaction(id);
+    return this.matcherService.getOpenTransaction(id);
   }
 
   public changeComparer(type: string): void {
@@ -79,10 +83,9 @@ export class AssignBillsComponent implements OnInit {
     const openTransactions = this.matcherService.getOpenTransactions();
     if (openTransactions.length === 0) {
       this.router.navigate(['/dashboard']);
-      return;
+    } else {
+      this.updateBills();
     }
-    this.transaction = openTransactions[0];
-    this.selectedBills = [];
   }
 
   private isAmountEqualToBill(bill: Bill): boolean {
