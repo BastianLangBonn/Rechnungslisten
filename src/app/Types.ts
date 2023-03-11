@@ -41,19 +41,12 @@ export interface Payment {
 }
 
 export interface Transaction extends MoneyConstruct{
-  bic: string;
-  bookingText: string;
   clientReference: string;
-  collectiveReference: string;
-  creditorId: string;
   currency: string;
-  directDebit: number;
-  iban: string;
   info: string;
   mandateReference: string;
   orderAccount: string;
   payer: string;
-  returnDebit: number;
   transactionDate: string;
   usage: string;
   valutaData: string;

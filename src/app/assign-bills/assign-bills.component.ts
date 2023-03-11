@@ -36,15 +36,16 @@ export class AssignBillsComponent implements OnInit {
   ) { }
 
   public ngOnInit(): void {
-    this.updateBills();
+    this.update();
   }
 
-  private updateBills(): void {
+  private update(): void {
     this.transaction = this.getTransaction();
     const openBills: Bill[] = this.matcherService.getOpenBills();
     this.billsMatchedByAmount = openBills.filter(this.isAmountEqualToBill.bind(this));
     this.billsMatchedByPayer = openBills.filter(this.isPayerInBill.bind(this));
     this.billsMatchedById = openBills.filter(this.isIdInBill.bind(this));
+    this.selectedBills = [];
   }
 
   private getTransaction(): Transaction {
@@ -84,7 +85,7 @@ export class AssignBillsComponent implements OnInit {
     if (openTransactions.length === 0) {
       this.router.navigate(['/dashboard']);
     } else {
-      this.updateBills();
+      this.update();
     }
   }
 
