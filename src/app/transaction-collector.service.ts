@@ -22,7 +22,7 @@ export class TransactionCollectorService {
         tap(console.log),
         map(data => this.dataCollectorService.splitCsvFile(data)),
         tap(console.log),
-        map(data => this.extractTransactions(data))
+        map(data => this.extractTransactions(data)),
       );
   }
 
@@ -40,8 +40,8 @@ export class TransactionCollectorService {
         bookingText: getEntry('Buchungstext'),
         usage: getEntry('Verwendungszweck'),
         payer: getEntry('Beguenstigter/Zahlungspflichtiger'),
-        mandateReference: getEntry('Kontonummer'),
-        clientReference: getEntry('BLZ'),
+        mandateReference: getEntry('Kontonummer/IBAN'),
+        // clientReference: getEntry('BLZ'),
         amount: getEntryAsNumber('Betrag'),
         currency: getEntry('Waehrung'),
         info: getEntry('Info'),

@@ -40,8 +40,8 @@ export interface Payment {
   changeTime: number;
 }
 
-export interface Transaction extends MoneyConstruct{
-  clientReference: string;
+export interface Transaction extends MoneyConstruct {
+  // clientReference: string;
   currency: string;
   info: string;
   mandateReference: string;
