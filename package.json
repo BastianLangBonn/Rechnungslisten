@@ -3,11 +3,16 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "concurrently \"ng serve\" \"npm run electron\"",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "electron": "electron ./src/electron.dev",
+    "package:win": "npm run build && cross-var electron-packager dist/ReLive $npm_package_name-$npm_package_version --out=packages --platform=win32 --arch=all --overwrite ",
+    "package:linux": "npm run build && cross-var electron-packager dist/ReLive $npm_package_name-$npm_package_version --out=packages --platform=linux --arch=all --overwrite ",
+    "package:osx": "npm run build && cross-var electron-packager dist/ReLive $npm_package_name-$npm_package_version --out=packages --platform=darwin --arch=all --overwrite ",
+    "package:all": "npm run build && cross-var electron-packager dist/ReLive $npm_package_name-$npm_package_version --out=packages --all --arch=all --overwrite "
   },
   "private": true,
   "dependencies": {
@@ -34,7 +39,10 @@
     "@types/jasmine": "~3.10.0",
     "@types/node": "^16.11.3",
     "@types/xml2js": "^0.4.9",
-    "codelyzer": "^0.0.28",
+    "concurrently": "^8.2.2",
+    "cross-var": "^1.1.0",
+    "electron": "^28.1.1",
+    "electron-packager": "^17.1.2",
     "jasmine-core": "~3.10.0",
     "jasmine-spec-reporter": "~7.0.0",
     "karma": "~6.3.5",
