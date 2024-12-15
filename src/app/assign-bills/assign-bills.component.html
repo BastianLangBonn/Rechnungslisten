@@ -17,7 +17,7 @@
 <label for="commentBox">Kommentar: </label>
 <input #commentBox id="commentBox" placeholder="Keine passende Rechnung"/>
 <button class="noMatch"
-    (click)="commentBox.value !== '' ? removeTransaction(commentBox.value) : removeTransaction(commentBox.placeholder)">
+    (click)="commentBox.value !== '' ? removeTransaction(commentBox.value) : removeTransaction(commentBox.placeholder); commentBox.value = ''">
     Keine passende Rechnung
 </button>
 <div class="remaining">Verbleibende Zahlungen: {{matcherService.getOpenTransactions().length}}</div>
