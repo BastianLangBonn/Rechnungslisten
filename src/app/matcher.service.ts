@@ -72,10 +72,20 @@ export class MatcherService {
     const matchesByName: Match[] = [];
     const isLastNameInPayer = (transaction: Transaction) => (bill: Bill) =>
       transaction.payer.toUpperCase().includes(bill.lastName.toUpperCase());
+    const stringToDate = (dateString: string) => {
+      const dateParts = dateString.split('.');
+      return new Date(`${dateParts[2].length===2?"20"+dateParts[2]:dateParts[2]}-${dateParts[1]}-${dateParts[0]}`);
+    }
+    const isBillDateBeforePayDate = (transaction: Transaction, bill: Bill) => {
+      const billDate = stringToDate(bill.date).toISOString();
+      const transactionDate = stringToDate(transaction.transactionDate).toISOString();
+      const billBeforeTransaction = billDate <= transactionDate;
+      return billBeforeTransaction;
+    }
     state.openTransactions.forEach(transaction => {
       const isLastNameInThisTransaction = isLastNameInPayer(transaction);
       const isBillAmountEqualToThisTransaction = (bill: Bill) => transaction.amount === bill.amount;
-      const bills: Bill[] = state.openBills.filter(bill => isLastNameInThisTransaction(bill) && isBillAmountEqualToThisTransaction(bill));
+      const bills: Bill[] = state.openBills.filter(bill => isLastNameInThisTransaction(bill) && isBillAmountEqualToThisTransaction(bill) && isBillDateBeforePayDate(transaction, bill));
       const matchesForThisTransaction = bills.map(bill => ({ bill, transaction }));
       matchesByName.concat(matchesForThisTransaction);
     });

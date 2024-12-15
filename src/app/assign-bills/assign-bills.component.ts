@@ -41,11 +41,24 @@ export class AssignBillsComponent implements OnInit {
 
   private update(): void {
     this.transaction = this.getTransaction();
-    const openBills: Bill[] = this.matcherService.getOpenBills();
+    const openBills: Bill[] = this.matcherService.getOpenBills().filter(this.billBeforeTransaction.bind(this));
     this.billsMatchedByAmount = openBills.filter(this.isAmountEqualToBill.bind(this));
     this.billsMatchedByPayer = openBills.filter(this.isPayerInBill.bind(this));
     this.billsMatchedById = openBills.filter(this.isIdInBill.bind(this));
     this.selectedBills = [];
+  }
+
+  private billBeforeTransaction(bill: Bill): boolean {
+    console.log("bill", bill);
+    console.log("transaction", this.transaction);
+    const billDate = this.stringToDate(bill.date).toISOString();
+    const transactionDate = this.stringToDate(this.transaction.transactionDate).toISOString();
+    return billDate <= transactionDate;
+  }
+
+  private stringToDate(date: string): Date {
+    const dateParts = date.split('.');
+    return new Date(`${dateParts[2].length===2?"20"+dateParts[2]:dateParts[2]}-${dateParts[1]}-${dateParts[0]}`);
   }
 
   private getTransaction(): Transaction {
